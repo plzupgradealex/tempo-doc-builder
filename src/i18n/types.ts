@@ -400,6 +400,13 @@ export interface Translations {
   syncBarSyncing: string;
   syncBarError: string;
 
+  // Publish
+  publishAgenda: string;
+  publishUpdate: string;
+  publishUnpublish: string;
+  publishPublishing: string;
+  publishCopied: string;
+
   // Sync modal
   syncSettings: string;
   syncModalDesc: string;

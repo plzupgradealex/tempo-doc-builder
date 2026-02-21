@@ -364,6 +364,13 @@ export const es: Translations = {
   syncBarSyncing: 'SINCRON.',
   syncBarError: 'ERROR SYNC',
 
+  // Publish
+  publishAgenda: 'Publicar',
+  publishUpdate: 'Actualizar publicación',
+  publishUnpublish: 'Despublicar',
+  publishPublishing: 'Publicando…',
+  publishCopied: '¡Enlace público copiado!',
+
   // Sync modal
   syncSettings: 'Ajustes de sincronización',
   syncModalDesc: 'Sincronice su biblioteca entre dispositivos usando una frase de contraseña. Use una passkey para acceso rápido en este dispositivo.',

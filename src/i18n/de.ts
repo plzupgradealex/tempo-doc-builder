@@ -364,6 +364,13 @@ export const de: Translations = {
   syncBarSyncing: 'SYNC',
   syncBarError: 'SYNC FEHL.',
 
+  // Publish
+  publishAgenda: 'Veröffentlichen',
+  publishUpdate: 'Veröff. aktualisieren',
+  publishUnpublish: 'Nicht veröffentlichen',
+  publishPublishing: 'Wird veröffentlicht…',
+  publishCopied: 'Öffentlicher Link kopiert!',
+
   // Sync modal
   syncSettings: 'Sync-Einstellungen',
   syncModalDesc: 'Synchronisieren Sie Ihre Bibliothek geräteübergreifend mit einer Passphrase. Nutzen Sie einen Passkey für schnellen Zugriff auf diesem Gerät.',

@@ -98,7 +98,7 @@ export class Room implements DurableObject {
 function cors(origin: string): Record<string, string> {
   return {
     'Access-Control-Allow-Origin': origin,
-    'Access-Control-Allow-Methods': 'GET, PUT, OPTIONS',
+    'Access-Control-Allow-Methods': 'GET, PUT, DELETE, OPTIONS',
     'Access-Control-Allow-Headers': 'Content-Type, X-Sync-Key',
   };
 }
@@ -139,6 +139,48 @@ export default {
       return json({ error: 'Method not allowed' }, 405, origin);
     }
 
+    // ── Publish: public agenda HTML pages ──
+    if (url.pathname.startsWith('/api/pub')) {
+      const key = request.headers.get('X-Sync-Key');
+      if (!key || key.length < 16) {
+        return json({ error: 'Missing or invalid sync key' }, 401, origin);
+      }
+
+      if (request.method === 'PUT') {
+        const { slug, html } = (await request.json()) as { slug: string; html: string };
+        if (!slug || !html) {
+          return json({ error: 'Missing slug or html' }, 400, origin);
+        }
+        if (!/^[a-z0-9][a-z0-9-]{1,78}[a-z0-9]$/.test(slug)) {
+          return json({ error: 'Invalid slug' }, 400, origin);
+        }
+        // Verify ownership if slug already exists
+        const existing = await env.SYNC_KV.getWithMetadata<{ owner: string }>(`pub:${slug}`);
+        if (existing.value && existing.metadata?.owner !== key) {
+          return json({ error: 'Slug already taken' }, 409, origin);
+        }
+        await env.SYNC_KV.put(`pub:${slug}`, html, { metadata: { owner: key } });
+        return json({ ok: true, slug }, 200, origin);
+      }
+
+      // DELETE /api/pub/:slug
+      const pubSlugMatch = url.pathname.match(/^\/api\/pub\/([a-z0-9][a-z0-9-]+[a-z0-9])$/);
+      if (request.method === 'DELETE' && pubSlugMatch) {
+        const slug = pubSlugMatch[1];
+        const existing = await env.SYNC_KV.getWithMetadata<{ owner: string }>(`pub:${slug}`);
+        if (!existing.value) {
+          return json({ error: 'Not found' }, 404, origin);
+        }
+        if (existing.metadata?.owner !== key) {
+          return json({ error: 'Forbidden' }, 403, origin);
+        }
+        await env.SYNC_KV.delete(`pub:${slug}`);
+        return json({ ok: true }, 200, origin);
+      }
+
+      return json({ error: 'Method not allowed' }, 405, origin);
+    }
+
     // ── Room: Durable Object WebSocket ──
     const roomMatch = url.pathname.match(/^\/api\/room\/([a-zA-Z0-9_-]+)$/);
     if (roomMatch) {
@@ -146,6 +188,22 @@ export default {
       const id = env.ROOMS.idFromName(roomId);
       const stub = env.ROOMS.get(id);
       return stub.fetch(request);
+    }
+
+    // ── Public page: serve published HTML ──
+    const pubPageMatch = url.pathname.match(/^\/([a-z0-9][a-z0-9-]+[a-z0-9])\.html$/);
+    if (pubPageMatch && request.method === 'GET') {
+      const slug = pubPageMatch[1];
+      const html = await env.SYNC_KV.get(`pub:${slug}`);
+      if (!html) {
+        return new Response('Not found', { status: 404, headers: { 'Content-Type': 'text/plain' } });
+      }
+      return new Response(html, {
+        headers: {
+          'Content-Type': 'text/html; charset=utf-8',
+          'Cache-Control': 'public, max-age=300',
+        },
+      });
     }
 
     // Health check

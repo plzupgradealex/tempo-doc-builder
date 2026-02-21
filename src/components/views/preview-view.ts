@@ -12,6 +12,9 @@ import { t } from '../../i18n';
 import { faToSymbol } from '../../utils/icon-map';
 import { createRoomId, joinRoom, getRoomUrl } from '../../sync/collab-client';
 import type { RoomConnection } from '../../sync/collab-client';
+import { isSyncEnabled } from '../../sync/sync-client';
+import { generateSlug, wrapStandaloneHTML, publishHTML, unpublishAgenda, getPublicUrl } from '../../sync/publish';
+import { saveAgenda } from '../../storage';
 
 export function initPreviewView(): void {
   const container = document.getElementById('view-preview')!;
@@ -65,7 +68,13 @@ function renderPreview(container: HTMLElement): void {
         <button class="lcars-btn accent lcars-shaped" id="preview-share">
           <i class="fa-solid fa-share-nodes"></i> ${t('shareAgenda')}
         </button>
+        ${isSyncEnabled() ? `
+        <button class="lcars-btn peach lcars-shaped" id="preview-publish">
+          <i class="fa-solid fa-globe"></i> ${agenda.publishedSlug ? t('publishUpdate') : t('publishAgenda')}
+        </button>
+        ` : ''}
       </div>
+      <div id="publish-status" style="display:none;padding:8px 14px;margin-bottom:8px;background:rgba(255,153,0,0.08);border-radius:6px;font-size:13px;color:var(--lcars-peach);"></div>
       <div id="share-status" style="display:none;padding:8px 14px;margin-bottom:8px;background:rgba(153,153,255,0.08);border-radius:6px;font-size:13px;color:var(--lcars-lavender);display:flex;align-items:center;gap:8px;"></div>
       <div class="preview-frame" id="preview-frame"></div>
     </div>
@@ -127,9 +136,93 @@ function renderPreview(container: HTMLElement): void {
       if (el) el.textContent = `${count} ${t('sharePeers')}`;
     });
   });
+
+  // ── Publish button ──
+  const publishBtn = container.querySelector('#preview-publish') as HTMLElement | null;
+  const publishStatus = container.querySelector('#publish-status') as HTMLElement;
+
+  // Show existing published URL if previously published
+  if (agenda.publishedSlug) {
+    const url = getPublicUrl(agenda.publishedSlug);
+    publishStatus.style.display = 'flex';
+    publishStatus.innerHTML = `
+      <i class="fa-solid fa-globe" style="margin-right:6px;"></i>
+      <a href="${url}" target="_blank" rel="noopener" style="color:var(--lcars-peach);text-decoration:underline;word-break:break-all;">${url}</a>
+      <button id="publish-copy" class="lcars-btn teal lcars-shaped" style="margin-left:auto;font-size:11px;padding:2px 10px;">
+        <i class="fa-solid fa-copy"></i>
+      </button>
+      <button id="publish-unpublish" class="lcars-btn lcars-shaped" style="font-size:11px;padding:2px 10px;background:var(--lcars-red,#cc6633);color:#fff;">
+        <i class="fa-solid fa-trash"></i> ${t('publishUnpublish')}
+      </button>
+    `;
+    publishStatus.querySelector('#publish-copy')!.addEventListener('click', async () => {
+      await navigator.clipboard.writeText(url);
+      publishStatus.querySelector('#publish-copy')!.innerHTML = `<i class="fa-solid fa-check"></i>`;
+      setTimeout(() => {
+        const btn = publishStatus.querySelector('#publish-copy');
+        if (btn) btn.innerHTML = `<i class="fa-solid fa-copy"></i>`;
+      }, 2000);
+    });
+    publishStatus.querySelector('#publish-unpublish')!.addEventListener('click', async () => {
+      const ok = await unpublishAgenda(agenda.publishedSlug!);
+      if (ok) {
+        agenda.publishedSlug = undefined;
+        agenda.publishedAt = undefined;
+        await saveAgenda(agenda);
+        publishStatus.style.display = 'none';
+        if (publishBtn) publishBtn.innerHTML = `<i class="fa-solid fa-globe"></i> ${t('publishAgenda')}`;
+      }
+    });
+  }
+
+  if (publishBtn) {
+    publishBtn.addEventListener('click', async () => {
+      publishBtn.setAttribute('disabled', 'true');
+      publishBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> ${t('publishPublishing')}`;
+
+      try {
+        const slug = agenda.publishedSlug || generateSlug(agenda);
+        const innerHtml = renderAgendaHTML(agenda);
+        const fullHtml = wrapStandaloneHTML(innerHtml, agenda);
+        const result = await publishHTML(slug, fullHtml);
+
+        if (result.ok) {
+          // Persist the slug on the agenda
+          agenda.publishedSlug = slug;
+          agenda.publishedAt = new Date().toISOString();
+          await saveAgenda(agenda);
+
+          // Copy URL
+          await navigator.clipboard.writeText(result.url);
+
+          publishStatus.style.display = 'flex';
+          publishStatus.innerHTML = `
+            <i class="fa-solid fa-check" style="color:#66cc99;margin-right:6px;"></i>
+            <span>${t('publishCopied')}</span>
+            <a href="${result.url}" target="_blank" rel="noopener" style="margin-left:8px;color:var(--lcars-peach);text-decoration:underline;word-break:break-all;">${result.url}</a>
+          `;
+          publishBtn.innerHTML = `<i class="fa-solid fa-globe"></i> ${t('publishUpdate')}`;
+        } else {
+          publishStatus.style.display = 'flex';
+          publishStatus.innerHTML = `
+            <i class="fa-solid fa-triangle-exclamation" style="color:#cc6633;margin-right:6px;"></i>
+            <span>${result.error}</span>
+          `;
+        }
+      } catch (err) {
+        publishStatus.style.display = 'flex';
+        publishStatus.innerHTML = `
+          <i class="fa-solid fa-triangle-exclamation" style="color:#cc6633;margin-right:6px;"></i>
+          <span>${String(err)}</span>
+        `;
+      } finally {
+        publishBtn.removeAttribute('disabled');
+      }
+    });
+  }
 }
 
-function renderAgendaHTML(agenda: ReturnType<typeof getState>['currentAgenda']): string {
+export function renderAgendaHTML(agenda: ReturnType<typeof getState>['currentAgenda']): string {
   if (!agenda) return '';
 
   const h = agenda.header;

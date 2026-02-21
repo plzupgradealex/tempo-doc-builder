@@ -360,6 +360,13 @@ export const fr: Translations = {
   syncBarSyncing: 'SYNCHRO.',
   syncBarError: 'ERR. SYNC',
 
+  // Publish
+  publishAgenda: 'Publier',
+  publishUpdate: 'Mettre à jour la pub.',
+  publishUnpublish: 'Dépublier',
+  publishPublishing: 'Publication…',
+  publishCopied: 'Lien public copié !',
+
   // Sync modal
   syncSettings: 'Paramètres de synchronisation',
   syncModalDesc: 'Synchronisez votre bibliothèque entre appareils avec une phrase secrète. Utilisez une passkey pour un accès rapide sur cet appareil.',

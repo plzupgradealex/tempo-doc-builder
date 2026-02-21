@@ -21,6 +21,7 @@ Tempo is an LCARS-styled (Star Trek TNG) consultant trip agenda builder PWA. It 
 - **Passkey (WebAuthn)**: HKDF from credential ID → AES-GCM encrypts passphrase locally; stored in localStorage. On boot, auto-unlocks if passkey exists but no passphrase in memory.
 - **Sync indicator**: Status bar text shows "CLOUDFLARE COMMLINK" when synced, with colour-coded states via `data-sync` attribute (offline/online/syncing/error/done). Clicking opens sync modal.
 - **Health checks**: Periodic HEAD requests to `/api/sync` every 60s to verify worker connectivity.
+- **Public publish**: Two-step process — saving an agenda does NOT update the public link. User must explicitly click "Publish" in preview view. Standalone HTML stored in KV with `pub:{slug}` key. Served at `/{slug}.html`. Friendly slugs generated from vendor-customer-project header fields. Ownership tracked via KV metadata; only the publisher's sync key can update/delete.
 
 ## Bus Events
 `view-changed`, `agenda-changed`, `trek-mode-changed`, `theme-changed`, `domains-changed`, `locale-changed`, `auth-changed`, `day-updated`, `open-topic-picker`, `agenda-saved`, `sync-status`, `sync-enabled`, `sync-disabled`
@@ -42,7 +43,7 @@ Tempo is an LCARS-styled (Star Trek TNG) consultant trip agenda builder PWA. It 
 - **`AgendaEvent`**: `id, type, topicDomainId?, title, description, bulletPoints[], startTime, endTime, duration, attendees[]`
 - **`AgendaDay`**: `id, date, dayStartTime ("09:00"), adjournTime ("17:00"), events[]`
 - **`KnowledgeDomain`**: `id, name, icon (FA class), description, defaultBulletPoints[], recommendedAttendees[], isDefault`
-- **`Agenda`**: `id, name, createdAt, updatedAt, header: AgendaHeader, travel: TravelInfo, preWork: PreWorkNeeds, days: AgendaDay[]`
+- **`Agenda`**: `id, name, createdAt, updatedAt, publishedSlug?, publishedAt?, header: AgendaHeader, travel: TravelInfo, preWork: PreWorkNeeds, days: AgendaDay[]`
 - **`AppState`**: `currentView: ViewName, currentAgenda, trekMode, theme: 'tng'|'movie', domains[]`
 - **`ViewName`**: `'agenda' | 'library' | 'domains' | 'preview' | 'about'`
 - **`TravelMode`**: `'flight' | 'train' | 'vehicle'`
@@ -64,7 +65,7 @@ src/
       agenda-view.ts   — main agenda builder (header form, pre-work, travel, day panels, save/draft buttons)
       library-view.ts  — saved agendas list (load/delete/export)
       domains-view.ts  — knowledge domain CRUD
-      preview-view.ts  — agenda preview + PDF/DOCX/JSON export buttons
+      preview-view.ts  — agenda preview + PDF/DOCX/JSON export + publish button + renderAgendaHTML (exported)
       about-view.ts    — about page with security transparency section
     agenda/
       header-form.ts   — project info form fields
@@ -94,6 +95,7 @@ src/
     passphrase.ts      — passphrase generation (3 words from curated list) + localStorage save/load/clear
     passkey.ts         — WebAuthn passkey register/authenticate/remove (HKDF + AES-GCM for passphrase encryption)
     collab-client.ts   — real-time collaboration via Durable Objects WebSocket rooms
+    publish.ts         — public HTML publishing (generateSlug, wrapStandaloneHTML, publishHTML, unpublishAgenda, getPublicUrl)
   trek/
     mode.ts            — Star Trek text mappings (~20 entries)
   styles/
@@ -157,6 +159,7 @@ Each domain has i18n keys: `domain{Id}`, `domain{Id}Desc`, `bullet{Id}1-4`, `att
 - **passkey.ts**: `registerPasskey(passphrase)`, `authenticateWithPasskey()`, `removePasskey()`, `hasRegisteredPasskey()`, `isPasskeySupported()`
 - **sync-indicator.ts**: `initSyncIndicator()` — manages status bar sync state + health checks
 - **sync-modal.ts**: `initSyncModal()` — overlay for managing sync settings
+- **publish.ts**: `generateSlug(agenda)`, `wrapStandaloneHTML(innerHtml, agenda)`, `publishHTML(slug, html)`, `unpublishAgenda(slug)`, `getPublicUrl(slug)`
 
 ## Testing
 - **Unit tests:** Vitest + jsdom in `tests/unit/` — 4 test files, 52 tests

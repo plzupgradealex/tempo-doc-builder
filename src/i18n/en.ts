@@ -395,6 +395,13 @@ export const en: Translations = {
   syncBarSyncing: 'SYNCING',
   syncBarError: 'SYNC ERR',
 
+  // Publish
+  publishAgenda: 'Publish',
+  publishUpdate: 'Update Published',
+  publishUnpublish: 'Unpublish',
+  publishPublishing: 'Publishing…',
+  publishCopied: 'Public link copied!',
+
   // Sync modal
   syncSettings: 'Sync Settings',
   syncModalDesc: 'Sync your library across devices using a passphrase. Use a passkey for quick access on this device.',

@@ -115,6 +115,8 @@ export interface Agenda {
   createdAt: string;
   updatedAt: string;
   isTemplate?: boolean;
+  publishedSlug?: string;   // URL slug when published (e.g. "vendor-customer-project-agenda")
+  publishedAt?: string;     // ISO timestamp of last publish
   header: AgendaHeader;
   travel: TravelInfo;
   preWork: PreWorkNeeds;

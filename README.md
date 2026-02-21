@@ -44,6 +44,7 @@ npm run deploy     # requires wrangler auth
 | **Library** | Save/load agendas in IndexedDB; JSON import/export |
 | **Cloud Sync** | E2E encrypted sync via Cloudflare Workers + KV with passphrase-based auth |
 | **Passkey Support** | WebAuthn biometric authentication for quick device unlock |
+| **Public Share Links** | Publish agendas as standalone HTML pages at friendly URLs (two-step: edits don't auto-publish) |
 | **i18n** | 4 languages (EN/ES/DE/FR) with ~240 translation keys |
 | **Star Trek Mode** | Toggle Trek terminology in the UI ("Project" → "Mission", etc.) — PDF stays professional |
 | **PWA** | Installable, works offline once cached |
@@ -60,6 +61,17 @@ Tempo uses a zero-knowledge cloud sync architecture:
 - **Status Bar**: When sync is enabled, the bottom bar shows "CLOUDFLARE COMMLINK" with colour-coded states (teal = linked, orange = syncing, red = error).
 
 Infrastructure: Cloudflare Workers (sync API), Cloudflare KV (encrypted blob storage), Durable Objects (real-time collaboration rooms).
+
+## Public Share Links
+
+Publish an agenda as a standalone public HTML page — separate from save/sync:
+
+1. **Build your agenda** in the editor and preview it.
+2. **Click "Publish"** in the Preview view — the HTML is uploaded to the worker and a friendly URL is generated (e.g. `https://tempo-sync.alex-31f.workers.dev/vendor-customer-project-agenda.html`).
+3. **Editing and saving does NOT update the public page.** You must click "Update Published" to push changes live.
+4. **Unpublish** removes the public page entirely.
+
+Slugs are auto-generated from the agenda header (vendor + customer + project). Only the original publisher (identified by sync key) can update or delete the page.
 
 ## Star Trek Mode
 
@@ -127,7 +139,8 @@ tempo/
 │   │   ├── crypto.ts             # PBKDF2 + AES-256-GCM encryption/decryption
 │   │   ├── passphrase.ts         # Passphrase generation + localStorage management
 │   │   ├── passkey.ts            # WebAuthn passkey register/authenticate/remove
-│   │   └── collab-client.ts      # Real-time collaboration via Durable Objects WebSocket
+│   │   ├── collab-client.ts      # Real-time collaboration via Durable Objects WebSocket
+│   │   └── publish.ts            # Public HTML publishing (two-step publish/unpublish)
 │   ├── trek/
 │   │   └── mode.ts               # Star Trek text replacements (~20 entries)
 │   ├── styles/
