@@ -139,6 +139,11 @@ function initAuthUI(): void {
   updateWelcome();
   on('auth-changed', updateWelcome);
   on('locale-changed', updateWelcome);
+
+  // Register service worker for PWA installability + offline
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/sw.js').catch(() => {});
+  }
 }
 
 // Boot the app
