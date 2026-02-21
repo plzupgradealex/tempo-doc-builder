@@ -111,8 +111,16 @@ export const en: Translations = {
   // About
   aboutTitle: 'About',
   aboutDescription: 'Build professional trip agendas for client visits. Add days, schedule topics from your knowledge domains, preview, and export as PDF.',
-  privacyTitle: 'Privacy First',
-  privacyDescription: 'All data stays in your browser. Agendas are saved locally using IndexedDB. Nothing is sent to any server.',
+  privacyTitle: 'Privacy & Data',
+  privacyDescription: 'Your agendas are stored locally in your browser using IndexedDB. If you enable Cloud Sync, your data is end-to-end encrypted before leaving your device — only someone with your passphrase can read it.',
+  securityTitle: 'Security & Encryption',
+  securityDescription: 'Cloud Sync uses end-to-end encryption. Here is how it works:',
+  securityE2E: 'Your data is encrypted in your browser using AES-256-GCM with a key derived from your passphrase (PBKDF2, 100k iterations). The encrypted blob is stored on Cloudflare KV.',
+  securityZeroKnowledge: 'Zero-knowledge: the server never sees your passphrase or your data. It only stores encrypted bytes, keyed by a SHA-256 hash of the passphrase.',
+  securityPassphrase: 'Your passphrase is the only credential. Share it across your devices to sync. Anyone with the passphrase can read and write the data — keep it private.',
+  securityPasskey: 'On each device, you can register a passkey (Face ID, Touch ID, PIN) to avoid re-entering the passphrase. The passkey encrypts the passphrase locally and never leaves the device.',
+  securityNoAccounts: 'There are no user accounts, no passwords, no tracking, and no analytics. The operator of this service cannot decrypt your data.',
+  securityTransparency: 'Transparency: this app is open source. All encryption happens client-side using the Web Crypto API. No third-party analytics or tracking scripts are loaded.',
   trekModeTitle: 'Star Trek Mode',
   trekModeDescription: 'Toggle the MODE button to enter Star Trek mode. UI labels change but your exported agendas stay professional.',
 
@@ -384,7 +392,6 @@ export const en: Translations = {
 
   // Sync status bar
   syncBarOffline: 'OFFLINE',
-  syncBarOnline: 'LINKED',
   syncBarSyncing: 'SYNCING',
   syncBarError: 'SYNC ERR',
 

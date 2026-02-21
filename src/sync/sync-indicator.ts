@@ -1,48 +1,51 @@
 /**
  * Sync Status Indicator — LCARS bottom-bar integration.
  *
- * Listens to sync-status bus events and updates the bottom-bar
- * indicator with state, glow, and label.  Also runs a periodic
- * health-check ping to the worker to confirm connectivity.
+ * Instead of a separate segment, sync state is shown on the
+ * status bar (#status-bar) itself.  When sync is enabled the
+ * bar shows "CLOUDFLARE COMMLINK" and changes colour to reflect
+ * the connection state (offline / online / syncing / error / done).
+ * When sync is disabled it reverts to the normal "Ready" text.
+ *
+ * Also runs a periodic health-check ping to the worker.
  */
 
 import { on } from '../bus';
 import { t } from '../i18n';
-import { isSyncEnabled } from './sync-client';
-
-const API = (import.meta as unknown as { env: Record<string, string> }).env
-  ?.VITE_SYNC_API ?? 'https://tempo-sync.alex-31f.workers.dev';
+import { isSyncEnabled, getApiUrl } from './sync-client';
 
 type SyncState = 'offline' | 'online' | 'syncing' | 'error' | 'done';
 
 let currentState: SyncState = 'offline';
 let healthTimer: ReturnType<typeof setInterval> | null = null;
 
-function getElements(): { segment: HTMLElement | null; dot: HTMLElement | null; label: HTMLElement | null } {
-  return {
-    segment: document.getElementById('sync-indicator'),
-    dot: document.getElementById('sync-dot'),
-    label: document.getElementById('sync-label'),
-  };
+function getStatusBar(): HTMLElement | null {
+  return document.getElementById('status-bar');
 }
 
 function labelFor(state: SyncState): string {
+  if (!isSyncEnabled()) return t('ready');
   switch (state) {
     case 'offline':  return t('syncBarOffline');
-    case 'online':   return t('syncBarOnline');
+    case 'online':   return 'CLOUDFLARE COMMLINK';
     case 'syncing':  return t('syncBarSyncing');
     case 'error':    return t('syncBarError');
-    case 'done':     return t('syncBarOnline');   // after done flash, show linked
+    case 'done':     return 'CLOUDFLARE COMMLINK';
   }
 }
 
 function setState(state: SyncState): void {
   currentState = state;
-  const { segment, label } = getElements();
-  if (!segment) return;
+  const bar = getStatusBar();
+  if (!bar) return;
 
-  segment.setAttribute('data-sync', state);
-  if (label) label.textContent = labelFor(state);
+  if (isSyncEnabled()) {
+    bar.setAttribute('data-sync', state);
+    bar.textContent = labelFor(state);
+  } else {
+    bar.setAttribute('data-sync', 'offline');
+    bar.textContent = t('ready');
+  }
 
   // After "done" flash, revert to "online" after a brief delay
   if (state === 'done') {
@@ -59,11 +62,10 @@ async function healthCheck(): Promise<boolean> {
     return false;
   }
   try {
-    const res = await fetch(`${API}/api/sync`, {
+    const res = await fetch(`${getApiUrl()}/api/sync`, {
       method: 'HEAD',
       signal: AbortSignal.timeout(5000),
     });
-    // 401/403 is fine — means worker is alive but no key provided
     return res.ok || res.status === 401 || res.status === 403 || res.status === 405;
   } catch {
     return false;
@@ -75,26 +77,23 @@ async function runHealthCheck(): Promise<void> {
     setState('offline');
     return;
   }
-  // Don't overwrite active syncing/done states with a health check
   const s = currentState as string;
   if (s === 'syncing' || s === 'done') return;
 
   const ok = await healthCheck();
   const s2 = currentState as string;
-  if (s2 === 'syncing' || s2 === 'done') return; // may have changed while awaiting
+  if (s2 === 'syncing' || s2 === 'done') return;
   setState(ok ? 'online' : 'error');
 }
 
 /** Initialise sync indicator — call from main.ts boot(). */
 export function initSyncIndicator(): void {
-  // Set initial state
   if (isSyncEnabled()) {
-    setState('syncing'); // will be doing initial sync
+    setState('syncing');
   } else {
     setState('offline');
   }
 
-  // Listen to sync-status events from sync-client.ts
   on('sync-status', (detail) => {
     const status = detail.status as string;
     switch (status) {
@@ -112,7 +111,6 @@ export function initSyncIndicator(): void {
     }
   });
 
-  // When sync is enabled/disabled, update immediately
   on('sync-enabled', () => {
     setState('syncing');
     startHealthChecks();
@@ -123,13 +121,10 @@ export function initSyncIndicator(): void {
     stopHealthChecks();
   });
 
-  // Update labels on locale change
   on('locale-changed', () => {
-    const { label } = getElements();
-    if (label) label.textContent = labelFor(currentState);
+    setState(currentState);
   });
 
-  // Start periodic health checks if sync is on
   if (isSyncEnabled()) {
     startHealthChecks();
   }
@@ -137,9 +132,7 @@ export function initSyncIndicator(): void {
 
 function startHealthChecks(): void {
   stopHealthChecks();
-  // Run a check right away (after a short delay to not block boot)
   setTimeout(() => runHealthCheck(), 3000);
-  // Then every 60 seconds
   healthTimer = setInterval(() => runHealthCheck(), 60_000);
 }
 

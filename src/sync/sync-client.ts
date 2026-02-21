@@ -55,7 +55,7 @@ export async function pushLibrary(): Promise<void> {
 
 /* ─── Pull (download KV → merge into local) ─── */
 
-export async function pullLibrary(): Promise<{ merged: number }> {
+async function pullLibrary(): Promise<{ merged: number }> {
   const phrase = getSavedPhrase();
   if (!phrase) return { merged: 0 };
 

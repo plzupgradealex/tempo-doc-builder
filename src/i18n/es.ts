@@ -99,8 +99,16 @@ export const es: Translations = {
 
   aboutTitle: 'Acerca de',
   aboutDescription: 'Construya agendas profesionales de viaje para visitas a clientes. Agregue días, programe temas de sus dominios de conocimiento, previsualice y exporte como PDF.',
-  privacyTitle: 'Privacidad Primero',
-  privacyDescription: 'Todos los datos permanecen en su navegador. Las agendas se guardan localmente usando IndexedDB. Nada se envía a ningún servidor.',
+  privacyTitle: 'Privacidad y datos',
+  privacyDescription: 'Sus agendas se almacenan localmente en su navegador usando IndexedDB. Si activa la sincronización en la nube, sus datos se cifran de extremo a extremo antes de salir de su dispositivo — solo alguien con su frase de sincronización puede leerlos.',
+  securityTitle: 'Seguridad y cifrado',
+  securityDescription: 'La sincronización en la nube utiliza cifrado de extremo a extremo. Así es como funciona:',
+  securityE2E: 'Sus datos se cifran en el navegador usando AES-256-GCM con una clave derivada de su frase de sincronización (PBKDF2, 100k iteraciones). El bloque cifrado se almacena en Cloudflare KV.',
+  securityZeroKnowledge: 'Conocimiento cero: el servidor nunca ve su frase de sincronización ni sus datos. Solo almacena bytes cifrados, indexados por un hash SHA-256 de la frase.',
+  securityPassphrase: 'Su frase de sincronización es la única credencial. Compártala entre sus dispositivos para sincronizar. Cualquier persona con la frase puede leer y escribir los datos — manténgala privada.',
+  securityPasskey: 'En cada dispositivo puede registrar una passkey (Face ID, Touch ID, PIN) para no tener que volver a introducir la frase. La passkey cifra la frase localmente y nunca sale del dispositivo.',
+  securityNoAccounts: 'No hay cuentas de usuario, ni contraseñas, ni seguimiento, ni analítica. El operador de este servicio no puede descifrar sus datos.',
+  securityTransparency: 'Transparencia: esta aplicación es de código abierto. Todo el cifrado ocurre en el cliente usando la Web Crypto API. No se cargan scripts de análisis ni rastreo de terceros.',
   trekModeTitle: 'Modo Star Trek',
   trekModeDescription: 'Active el botón MODO para entrar en el modo Star Trek. Las etiquetas de la interfaz cambian pero sus agendas exportadas permanecen profesionales.',
 
@@ -353,7 +361,6 @@ export const es: Translations = {
 
   // Sync status bar
   syncBarOffline: 'OFFLINE',
-  syncBarOnline: 'ENLAZADO',
   syncBarSyncing: 'SINCRON.',
   syncBarError: 'ERROR SYNC',
 

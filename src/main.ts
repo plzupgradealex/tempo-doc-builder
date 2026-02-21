@@ -15,7 +15,7 @@ import { initPreviewView } from './components/views/preview-view';
 import { initAboutView } from './components/views/about-view';
 import { initTopicPicker } from './components/agenda/topic-picker';
 import { loadCustomDomains } from './storage';
-import { setDomains, setAgenda, getState } from './state';
+import { setDomains, setAgenda, getState, setView } from './state';
 import { on, emit } from './bus';
 import { t } from './i18n';
 import { getUser, handleOIDCCallback } from './auth/auth';
@@ -25,7 +25,6 @@ import { initSyncIndicator } from './sync/sync-indicator';
 import { initSyncModal } from './sync/sync-modal';
 import { hasRegisteredPasskey, authenticateWithPasskey } from './sync/passkey';
 import { savePhrase } from './sync/passphrase';
-import { setView } from './state';
 
 async function boot(): Promise<void> {
   // Load custom domains from IndexedDB if available
@@ -71,14 +70,12 @@ async function boot(): Promise<void> {
     }
   });
 
-  // Set initial status
+  // Set initial status text (sync-indicator will override if sync is on)
   const status = document.getElementById('status-bar');
-  if (status) status.textContent = t('ready');
+  if (status && !isSyncEnabled()) status.textContent = t('ready');
 
-  // Update status text on locale change
+  // Update agenda status on locale change
   on('locale-changed', () => {
-    const st = document.getElementById('status-bar');
-    if (st && st.textContent !== '') st.textContent = t('ready');
     const agendaStatus = document.getElementById('agenda-status');
     const agenda = getState().currentAgenda;
     if (agendaStatus && agenda) {

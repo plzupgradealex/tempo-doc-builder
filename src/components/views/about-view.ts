@@ -40,7 +40,7 @@ function renderAbout(container: HTMLElement): void {
             ${t('aboutToolsDescription')}
           </p>
           <div style="display: flex; flex-wrap: wrap; gap: 8px;">
-            ${['Vite', 'TypeScript', 'jsPDF', 'docx', 'FileSaver.js', 'Cloudflare Workers', 'Cloudflare KV', 'Durable Objects'].map(tool =>
+            ${['Vite', 'TypeScript', 'jsPDF', 'docx', 'FileSaver.js', 'Cloudflare Workers', 'Cloudflare KV', 'Durable Objects', 'Web Crypto', 'WebAuthn'].map(tool =>
               `<span style="display:inline-block;padding:4px 12px;background:rgba(255,153,0,0.12);border-radius:12px;font-size:12px;color:var(--lcars-orange);letter-spacing:1px;">${tool}</span>`
             ).join('')}
           </div>
@@ -51,6 +51,41 @@ function renderAbout(container: HTMLElement): void {
             <strong style="color: var(--lcars-teal);">${t('privacyTitle')}</strong><br><br>
             ${t('privacyDescription')}
           </p>
+        </div>
+
+        <div style="background: rgba(102, 178, 255, 0.08); border-left: 4px solid var(--lcars-sky); padding: 16px; border-radius: 0 8px 8px 0; margin: 20px 0;">
+          <p style="margin: 0 0 12px 0;">
+            <strong style="color: var(--lcars-sky);">${t('securityTitle')}</strong>
+          </p>
+          <p style="margin: 0 0 16px 0; font-size: 14px; color: var(--lcars-text);">
+            ${t('securityDescription')}
+          </p>
+          <div style="display: flex; flex-direction: column; gap: 10px; font-size: 14px; color: var(--lcars-text);">
+            <div style="display: flex; gap: 10px; align-items: baseline;">
+              <span style="color: var(--lcars-sky); font-weight: bold; flex-shrink: 0;">&#9670;</span>
+              <span>${t('securityE2E')}</span>
+            </div>
+            <div style="display: flex; gap: 10px; align-items: baseline;">
+              <span style="color: var(--lcars-sky); font-weight: bold; flex-shrink: 0;">&#9670;</span>
+              <span>${t('securityZeroKnowledge')}</span>
+            </div>
+            <div style="display: flex; gap: 10px; align-items: baseline;">
+              <span style="color: var(--lcars-sky); font-weight: bold; flex-shrink: 0;">&#9670;</span>
+              <span>${t('securityPassphrase')}</span>
+            </div>
+            <div style="display: flex; gap: 10px; align-items: baseline;">
+              <span style="color: var(--lcars-sky); font-weight: bold; flex-shrink: 0;">&#9670;</span>
+              <span>${t('securityPasskey')}</span>
+            </div>
+            <div style="display: flex; gap: 10px; align-items: baseline;">
+              <span style="color: var(--lcars-sky); font-weight: bold; flex-shrink: 0;">&#9670;</span>
+              <span>${t('securityNoAccounts')}</span>
+            </div>
+            <div style="display: flex; gap: 10px; align-items: baseline;">
+              <span style="color: var(--lcars-sky); font-weight: bold; flex-shrink: 0;">&#9670;</span>
+              <span>${t('securityTransparency')}</span>
+            </div>
+          </div>
         </div>
 
         <div style="background: rgba(153, 153, 255, 0.1); border-left: 4px solid var(--lcars-lavender); padding: 16px; border-radius: 0 8px 8px 0; margin: 20px 0;">

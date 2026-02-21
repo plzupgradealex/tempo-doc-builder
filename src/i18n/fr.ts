@@ -97,8 +97,16 @@ export const fr: Translations = {
 
   aboutTitle: 'À propos',
   aboutDescription: 'Construisez des agendas de voyage professionnels pour les visites clients. Ajoutez des jours, planifiez des sujets depuis vos domaines de connaissance, prévisualisez et exportez en PDF.',
-  privacyTitle: 'Vie Privée d\'abord',
-  privacyDescription: 'Toutes les données restent dans votre navigateur. Les agendas sont sauvegardés localement avec IndexedDB. Rien n\'est envoyé à un serveur.',
+  privacyTitle: 'Vie privée et données',
+  privacyDescription: 'Vos agendas sont stockés localement dans votre navigateur avec IndexedDB. Si vous activez la synchronisation cloud, vos données sont chiffrées de bout en bout avant de quitter votre appareil — seule une personne disposant de votre phrase de synchronisation peut les lire.',
+  securityTitle: 'Sécurité et chiffrement',
+  securityDescription: 'La synchronisation cloud utilise le chiffrement de bout en bout. Voici comment cela fonctionne :',
+  securityE2E: 'Vos données sont chiffrées dans votre navigateur avec AES-256-GCM avec une clé dérivée de votre phrase (PBKDF2, 100k itérations). Le blob chiffré est stocké sur Cloudflare KV.',
+  securityZeroKnowledge: 'Connaissance zéro : le serveur ne voit jamais votre phrase ni vos données. Il ne stocke que des octets chiffrés, indexés par un hash SHA-256 de la phrase.',
+  securityPassphrase: 'Votre phrase de synchronisation est la seule crédentiel. Partagez-la entre vos appareils pour synchroniser. Toute personne disposant de la phrase peut lire et écrire les données — gardez-la privée.',
+  securityPasskey: 'Sur chaque appareil, vous pouvez enregistrer une passkey (Face ID, Touch ID, PIN) pour éviter de ressaisir la phrase. La passkey chiffre la phrase localement et ne quitte jamais l\'appareil.',
+  securityNoAccounts: 'Il n\'y a pas de comptes utilisateurs, pas de mots de passe, pas de suivi et pas d\'analytique. L\'opérateur de ce service ne peut pas déchiffrer vos données.',
+  securityTransparency: 'Transparence : cette application est open source. Tout le chiffrement se fait côté client avec la Web Crypto API. Aucun script d\'analyse ou de suivi tiers n\'est chargé.',
   trekModeTitle: 'Mode Star Trek',
   trekModeDescription: 'Activez le bouton MODE pour passer en mode Star Trek. Les libellés de l\'interface changent mais vos agendas exportés restent professionnels.',
 
@@ -349,7 +357,6 @@ export const fr: Translations = {
 
   // Sync status bar
   syncBarOffline: 'HORS LIGNE',
-  syncBarOnline: 'CONNECTÉ',
   syncBarSyncing: 'SYNCHRO.',
   syncBarError: 'ERR. SYNC',
 

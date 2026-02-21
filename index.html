@@ -54,7 +54,6 @@
       <div class="view" id="view-domains"></div>
       <div class="view" id="view-preview"></div>
       <div class="view" id="view-about"></div>
-      <div class="view" id="view-language"></div>
     </main>
 
     <!-- Bottom Left Elbow -->
@@ -66,16 +65,12 @@
 
     <!-- Bottom Bar -->
     <div class="lcars-bottom-bar">
-      <div class="lcars-bar-segment tan" id="status-bar" style="flex: 2;">Ready</div>
+      <div class="lcars-bar-segment status-bar-segment" id="status-bar" data-sync="offline">Ready</div>
       <div class="lcars-bar-segment peach" style="flex: 1;">
         <span id="agenda-status">No agenda</span>
       </div>
-      <div class="lcars-bar-segment sync-status-segment" id="sync-indicator" title="Cloudflare Sync">
-        <span class="sync-dot" id="sync-dot"></span>
-        <span class="sync-label" id="sync-label">OFFLINE</span>
-      </div>
-      <button class="lcars-bar-segment lavender lcars-bar-cap" id="help-btn" title="Help" style="cursor:pointer; border:none; font-family:var(--lcars-font); min-width:120px; padding:0 18px;">
-        <span style="font-size:15px; font-weight:600; letter-spacing:2px;">HELP</span>
+      <button class="lcars-bar-segment lavender lcars-bar-cap help-btn" id="help-btn" title="Help">
+        <span class="help-btn-label">HELP</span>
       </button>
     </div>
   </div>

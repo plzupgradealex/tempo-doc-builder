@@ -1043,115 +1043,74 @@
 }
 
 /* ============================================================
-   SYNC STATUS INDICATOR — Bottom Bar
+   SYNC STATUS — Status Bar Integration
    ============================================================ */
 
-.sync-status-segment {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  min-width: 130px;
-  padding: 0 14px;
-  background: var(--lcars-bg);
-  border: 2px solid var(--lcars-text-dim);
+.status-bar-segment {
+  flex: 2;
+  cursor: pointer;
+  transition: color 0.4s, text-shadow 0.4s;
+}
+
+/* Offline — default tan */
+.status-bar-segment[data-sync="offline"] {
+  color: var(--lcars-tan);
+}
+
+/* Online / linked — teal text with subtle glow */
+.status-bar-segment[data-sync="online"] {
+  color: var(--lcars-teal);
+  text-shadow: 0 0 6px rgba(102, 204, 204, 0.4);
+}
+
+/* Syncing — pulsing orange */
+.status-bar-segment[data-sync="syncing"] {
+  color: var(--lcars-orange);
+  animation: status-pulse 1.2s ease-in-out infinite;
+}
+
+@keyframes status-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+/* Error — muted red */
+.status-bar-segment[data-sync="error"] {
+  color: var(--lcars-red);
+  animation: status-error 2s ease-in-out infinite;
+}
+
+@keyframes status-error {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+/* Done — brief lavender flash */
+.status-bar-segment[data-sync="done"] {
+  color: var(--lcars-lavender);
+  text-shadow: 0 0 8px rgba(153, 153, 255, 0.5);
+  animation: status-done 0.6s ease-out;
+}
+
+@keyframes status-done {
+  0% { text-shadow: 0 0 16px rgba(153, 153, 255, 0.7); }
+  100% { text-shadow: 0 0 8px rgba(153, 153, 255, 0.5); }
+}
+
+/* ============================================================
+   HELP BUTTON — Bottom Bar Cap
+   ============================================================ */
+
+.help-btn {
+  cursor: pointer;
+  border: none;
   font-family: var(--lcars-font);
-  font-size: 13px;
+  min-width: 120px;
+  padding: 0 18px;
+}
+
+.help-btn-label {
+  font-size: 15px;
   font-weight: 600;
   letter-spacing: 2px;
-  color: var(--lcars-text-dim);
-  transition: border-color 0.4s, color 0.4s, background 0.4s;
-  cursor: default;
-}
-
-.sync-dot {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background: var(--lcars-text-dim);
-  flex-shrink: 0;
-  transition: background 0.4s, box-shadow 0.4s;
-}
-
-.sync-label {
-  white-space: nowrap;
-}
-
-/* Offline — dim, no glow */
-.sync-status-segment[data-sync="offline"] {
-  border-color: var(--lcars-text-dim);
-  color: var(--lcars-text-dim);
-}
-.sync-status-segment[data-sync="offline"] .sync-dot {
-  background: var(--lcars-text-dim);
-}
-
-/* Online / linked — steady teal glow */
-.sync-status-segment[data-sync="online"] {
-  border-color: var(--lcars-teal);
-  color: var(--lcars-teal);
-}
-.sync-status-segment[data-sync="online"] .sync-dot {
-  background: var(--lcars-teal);
-  box-shadow: 0 0 6px var(--lcars-teal), 0 0 12px rgba(102, 204, 204, 0.3);
-}
-
-/* Syncing — pulsing animation */
-.sync-status-segment[data-sync="syncing"] {
-  border-color: var(--lcars-orange);
-  color: var(--lcars-orange);
-}
-.sync-status-segment[data-sync="syncing"] .sync-dot {
-  background: var(--lcars-orange);
-  animation: sync-pulse 1s ease-in-out infinite;
-}
-
-@keyframes sync-pulse {
-  0%, 100% {
-    opacity: 1;
-    box-shadow: 0 0 4px var(--lcars-orange);
-  }
-  50% {
-    opacity: 0.3;
-    box-shadow: 0 0 12px var(--lcars-orange), 0 0 24px rgba(255, 153, 0, 0.4);
-  }
-}
-
-/* Error — muted red pulse */
-.sync-status-segment[data-sync="error"] {
-  border-color: var(--lcars-red);
-  color: var(--lcars-red);
-}
-.sync-status-segment[data-sync="error"] .sync-dot {
-  background: var(--lcars-red);
-  animation: sync-error-pulse 2s ease-in-out infinite;
-}
-
-@keyframes sync-error-pulse {
-  0%, 100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.5;
-  }
-}
-
-/* After a successful sync, brief flash of lavender */
-.sync-status-segment[data-sync="done"] {
-  border-color: var(--lcars-lavender);
-  color: var(--lcars-lavender);
-}
-.sync-status-segment[data-sync="done"] .sync-dot {
-  background: var(--lcars-lavender);
-  box-shadow: 0 0 8px var(--lcars-lavender), 0 0 16px rgba(153, 153, 255, 0.4);
-  animation: sync-done-flash 0.6s ease-out;
-}
-
-@keyframes sync-done-flash {
-  0% {
-    box-shadow: 0 0 16px var(--lcars-lavender), 0 0 32px rgba(153, 153, 255, 0.6);
-  }
-  100% {
-    box-shadow: 0 0 8px var(--lcars-lavender), 0 0 16px rgba(153, 153, 255, 0.4);
-  }
 }

@@ -5,6 +5,10 @@ export default defineConfig({
   build: {
     outDir: 'dist',
     emptyOutDir: true,
+    rollupOptions: {
+      // jsPDF optional deps — we don't use .html() rendering
+      external: ['canvg', 'html2canvas', 'dompurify'],
+    },
   },
   server: {
     port: 5174,

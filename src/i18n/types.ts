@@ -117,6 +117,14 @@ export interface Translations {
   aboutDescription: string;
   privacyTitle: string;
   privacyDescription: string;
+  securityTitle: string;
+  securityDescription: string;
+  securityE2E: string;
+  securityZeroKnowledge: string;
+  securityPassphrase: string;
+  securityPasskey: string;
+  securityNoAccounts: string;
+  securityTransparency: string;
   trekModeTitle: string;
   trekModeDescription: string;
 
@@ -389,7 +397,6 @@ export interface Translations {
 
   // Sync status bar
   syncBarOffline: string;
-  syncBarOnline: string;
   syncBarSyncing: string;
   syncBarError: string;
 

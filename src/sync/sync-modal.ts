@@ -42,11 +42,6 @@ export function initSyncModal(): void {
   statusBar?.addEventListener('click', open);
   if (statusBar) statusBar.style.cursor = 'pointer';
 
-  // Make sync indicator clickable too
-  const syncIndicator = document.getElementById('sync-indicator');
-  syncIndicator?.addEventListener('click', open);
-  if (syncIndicator) syncIndicator.style.cursor = 'pointer';
-
   // Update title on locale change
   on('locale-changed', () => {
     const titleEl = document.getElementById('sync-modal-title');

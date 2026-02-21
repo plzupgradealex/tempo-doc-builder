@@ -99,8 +99,16 @@ export const de: Translations = {
 
   aboutTitle: 'Info',
   aboutDescription: 'Erstellen Sie professionelle Reiseagenden für Kundenbesuche. Fügen Sie Tage hinzu, planen Sie Themen aus Ihren Wissensdomänen, Vorschau und Export als PDF.',
-  privacyTitle: 'Datenschutz zuerst',
-  privacyDescription: 'Alle Daten bleiben in Ihrem Browser. Agenden werden lokal mit IndexedDB gespeichert. Nichts wird an einen Server gesendet.',
+  privacyTitle: 'Datenschutz & Daten',
+  privacyDescription: 'Ihre Agenden werden lokal in Ihrem Browser mit IndexedDB gespeichert. Wenn Sie Cloud-Sync aktivieren, werden Ihre Daten Ende-zu-Ende verschlüsselt, bevor sie Ihr Gerät verlassen — nur jemand mit Ihrer Passphrase kann sie lesen.',
+  securityTitle: 'Sicherheit & Verschlüsselung',
+  securityDescription: 'Cloud-Sync verwendet Ende-zu-Ende-Verschlüsselung. So funktioniert es:',
+  securityE2E: 'Ihre Daten werden im Browser mit AES-256-GCM verschlüsselt, wobei der Schlüssel aus Ihrer Passphrase abgeleitet wird (PBKDF2, 100k Iterationen). Der verschlüsselte Block wird auf Cloudflare KV gespeichert.',
+  securityZeroKnowledge: 'Zero-Knowledge: Der Server sieht weder Ihre Passphrase noch Ihre Daten. Er speichert nur verschlüsselte Bytes, indiziert durch einen SHA-256-Hash der Passphrase.',
+  securityPassphrase: 'Ihre Passphrase ist die einzige Berechtigung. Teilen Sie sie zwischen Ihren Geräten zum Synchronisieren. Jeder mit der Passphrase kann die Daten lesen und schreiben — halten Sie sie geheim.',
+  securityPasskey: 'Auf jedem Gerät können Sie einen Passkey registrieren (Face ID, Touch ID, PIN), um die Passphrase nicht erneut eingeben zu müssen. Der Passkey verschlüsselt die Passphrase lokal und verlässt das Gerät nie.',
+  securityNoAccounts: 'Es gibt keine Benutzerkonten, keine Passwörter, kein Tracking und keine Analyse. Der Betreiber dieses Dienstes kann Ihre Daten nicht entschlüsseln.',
+  securityTransparency: 'Transparenz: Diese App ist Open Source. Alle Verschlüsselung erfolgt clientseitig mit der Web Crypto API. Es werden keine Analyse- oder Tracking-Skripte geladen.',
   trekModeTitle: 'Star-Trek-Modus',
   trekModeDescription: 'Schalten Sie den MODUS-Button um, um den Star-Trek-Modus zu aktivieren. UI-Beschriftungen ändern sich, aber Ihre exportierten Agenden bleiben professionell.',
 
@@ -353,7 +361,6 @@ export const de: Translations = {
 
   // Sync status bar
   syncBarOffline: 'OFFLINE',
-  syncBarOnline: 'VERBUNDEN',
   syncBarSyncing: 'SYNC',
   syncBarError: 'SYNC FEHL.',
 
