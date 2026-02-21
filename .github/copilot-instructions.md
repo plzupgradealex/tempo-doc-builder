@@ -19,7 +19,7 @@ Tempo is an LCARS-styled (Star Trek TNG) consultant trip agenda builder PWA. It 
 - **Sync API**: Cloudflare Worker at `https://tempo-sync.alex-31f.workers.dev` with KV namespace for encrypted blob storage and Durable Objects for real-time collaboration rooms.
 - **Encryption**: PBKDF2 (100k iterations, SHA-256) derives AES-256-GCM key from passphrase. Wire format: `base64(salt[16] + iv[12] + ciphertext)`. Passphrase → SHA-256 hash = KV storage key. Server is zero-knowledge.
 - **Passkey (WebAuthn)**: HKDF from credential ID → AES-GCM encrypts passphrase locally; stored in localStorage. On boot, auto-unlocks if passkey exists but no passphrase in memory.
-- **Sync indicator**: Status bar text shows "CLOUDFLARE COMMLINK" when synced, with colour-coded states via `data-sync` attribute (offline/online/syncing/error/done). Clicking opens sync modal.
+- **Sync indicator**: Status bar shows "READY" by default; when synced shows "READY · 🔒 CLOUDFLARE COMMLINK" in teal. State transitions use a typewriter animation (one letter at a time). No pulsing/throbbing — low-tech LCARS style. Clicking opens sync modal.
 - **Health checks**: Periodic HEAD requests to `/api/sync` every 60s to verify worker connectivity.
 - **Public publish**: Two-step process — saving an agenda does NOT update the public link. User must explicitly click "Publish" in preview view. Standalone HTML stored in KV with `pub:{slug}` key. Served at `/{slug}.html`. Friendly slugs generated from vendor-customer-project header fields. Ownership tracked via KV metadata; only the publisher's sync key can update/delete.
 
@@ -35,7 +35,7 @@ Tempo is an LCARS-styled (Star Trek TNG) consultant trip agenda builder PWA. It 
 6. **Time inputs** use `step="900"` for 15-minute increments.
 7. **Event insertion** — `findInsertionIndex(events, eventType)` scans backwards for last event of same type, inserts after it; falls back to before recap/adjourn.
 8. **Draft system** — localStorage quick save/restore. Draft auto-clears on full save to library. On app load, shows restore/discard prompt if draft exists.
-9. **Bottom bar layout** — 3 segments: status bar (flex:2, shows "Ready" or "CLOUDFLARE COMMLINK"), agenda status (flex:1, day/event counts), HELP button (cap). No separate sync indicator segment — sync state shown via text + colour on status bar.
+9. **Bottom bar layout** — 3 segments: status bar (flex:2, shows "Ready" or "Ready · 🔒 CLOUDFLARE COMMLINK"), agenda status (flex:1, day/event counts), HELP button (cap). Sync state shown via text + colour on status bar with typewriter animation for transitions. No separate sync indicator segment, no pulsing animations.
 10. **Bundle optimisation** — jsPDF optional deps (canvg, html2canvas, dompurify) excluded via rollup externals in vite.config.ts. 0 npm vulnerabilities.
 
 ## Types (src/types.ts)

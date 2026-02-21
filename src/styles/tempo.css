@@ -1049,7 +1049,8 @@
 .status-bar-segment {
   flex: 2;
   cursor: pointer;
-  transition: color 0.4s, text-shadow 0.4s;
+  transition: color 0.4s;
+  font-variant-numeric: tabular-nums;
 }
 
 /* Offline — default tan */
@@ -1057,44 +1058,24 @@
   color: var(--lcars-tan);
 }
 
-/* Online / linked — teal text with subtle glow */
+/* Online / linked — teal text */
 .status-bar-segment[data-sync="online"] {
   color: var(--lcars-teal);
-  text-shadow: 0 0 6px rgba(102, 204, 204, 0.4);
 }
 
-/* Syncing — pulsing orange */
+/* Syncing — orange text, no animation (typewriter handles it) */
 .status-bar-segment[data-sync="syncing"] {
   color: var(--lcars-orange);
-  animation: status-pulse 1.2s ease-in-out infinite;
-}
-
-@keyframes status-pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.4; }
 }
 
 /* Error — muted red */
 .status-bar-segment[data-sync="error"] {
   color: var(--lcars-red);
-  animation: status-error 2s ease-in-out infinite;
 }
 
-@keyframes status-error {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.6; }
-}
-
-/* Done — brief lavender flash */
+/* Done — brief lavender */
 .status-bar-segment[data-sync="done"] {
   color: var(--lcars-lavender);
-  text-shadow: 0 0 8px rgba(153, 153, 255, 0.5);
-  animation: status-done 0.6s ease-out;
-}
-
-@keyframes status-done {
-  0% { text-shadow: 0 0 16px rgba(153, 153, 255, 0.7); }
-  100% { text-shadow: 0 0 8px rgba(153, 153, 255, 0.5); }
 }
 
 /* ============================================================

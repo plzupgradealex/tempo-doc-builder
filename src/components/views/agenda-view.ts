@@ -18,6 +18,11 @@ import { t } from '../../i18n';
 export function initAgendaView(): void {
   const container = document.getElementById('view-agenda')!;
 
+  // Always register the reload listener so JSON imports re-render
+  on('agenda-loaded', () => {
+    renderAgendaView(container);
+  });
+
   // Check for a saved draft first
   const draft = loadDraft();
   if (draft) {
@@ -31,11 +36,6 @@ export function initAgendaView(): void {
   }
 
   renderAgendaView(container);
-
-  // Re-render when agenda changes significantly
-  on('agenda-loaded', () => {
-    renderAgendaView(container);
-  });
 }
 
 function renderAgendaView(container: HTMLElement): void {

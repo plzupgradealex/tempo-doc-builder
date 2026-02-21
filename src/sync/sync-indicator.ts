@@ -1,13 +1,11 @@
 /**
  * Sync Status Indicator — LCARS bottom-bar integration.
  *
- * Instead of a separate segment, sync state is shown on the
- * status bar (#status-bar) itself.  When sync is enabled the
- * bar shows "CLOUDFLARE COMMLINK" and changes colour to reflect
- * the connection state (offline / online / syncing / error / done).
- * When sync is disabled it reverts to the normal "Ready" text.
- *
- * Also runs a periodic health-check ping to the worker.
+ * Shows sync state on the status bar (#status-bar) with a
+ * typewriter animation for state changes.  When sync is enabled
+ * the bar shows "READY · 🔒 CLOUDFLARE COMMLINK".  State
+ * transitions type out the new text one letter at a time for
+ * an authentic low-tech LCARS feel.
  */
 
 import { on } from '../bus';
@@ -18,6 +16,7 @@ type SyncState = 'offline' | 'online' | 'syncing' | 'error' | 'done';
 
 let currentState: SyncState = 'offline';
 let healthTimer: ReturnType<typeof setInterval> | null = null;
+let typewriterTimer: ReturnType<typeof setTimeout> | null = null;
 
 function getStatusBar(): HTMLElement | null {
   return document.getElementById('status-bar');
@@ -26,22 +25,53 @@ function getStatusBar(): HTMLElement | null {
 function labelFor(state: SyncState): string {
   if (!isSyncEnabled()) return t('ready');
   switch (state) {
-    case 'offline':  return t('syncBarOffline');
-    case 'online':   return 'CLOUDFLARE COMMLINK';
-    case 'syncing':  return t('syncBarSyncing');
-    case 'error':    return t('syncBarError');
-    case 'done':     return 'CLOUDFLARE COMMLINK';
+    case 'offline':  return t('ready');
+    case 'online':   return `${t('ready')} · 🔒 CLOUDFLARE COMMLINK`;
+    case 'syncing':  return `${t('ready')} · 🔒 SYNCING...`;
+    case 'error':    return `${t('ready')} · ⚠ ${t('syncBarError')}`;
+    case 'done':     return `${t('ready')} · 🔒 SYNC COMPLETE`;
   }
 }
 
-function setState(state: SyncState): void {
+/** Type out text one character at a time, LCARS style. */
+function typewrite(bar: HTMLElement, text: string, speed = 28): void {
+  // Cancel any running typewriter
+  if (typewriterTimer) {
+    clearTimeout(typewriterTimer);
+    typewriterTimer = null;
+  }
+
+  let i = 0;
+  bar.textContent = '';
+
+  function tick(): void {
+    if (i <= text.length) {
+      bar.textContent = text.slice(0, i) + (i < text.length ? '▌' : '');
+      i++;
+      typewriterTimer = setTimeout(tick, speed);
+    } else {
+      bar.textContent = text;
+      typewriterTimer = null;
+    }
+  }
+  tick();
+}
+
+function setState(state: SyncState, animate = true): void {
+  const prev = currentState;
   currentState = state;
   const bar = getStatusBar();
   if (!bar) return;
 
+  const text = labelFor(state);
+
   if (isSyncEnabled()) {
     bar.setAttribute('data-sync', state);
-    bar.textContent = labelFor(state);
+    if (animate && state !== prev) {
+      typewrite(bar, text);
+    } else {
+      bar.textContent = text;
+    }
   } else {
     bar.setAttribute('data-sync', 'offline');
     bar.textContent = t('ready');
@@ -51,7 +81,7 @@ function setState(state: SyncState): void {
   if (state === 'done') {
     setTimeout(() => {
       if (currentState === 'done') setState('online');
-    }, 2400);
+    }, 3000);
   }
 }
 
@@ -91,7 +121,7 @@ export function initSyncIndicator(): void {
   if (isSyncEnabled()) {
     setState('syncing');
   } else {
-    setState('offline');
+    setState('offline', false);
   }
 
   on('sync-status', (detail) => {
@@ -122,7 +152,7 @@ export function initSyncIndicator(): void {
   });
 
   on('locale-changed', () => {
-    setState(currentState);
+    setState(currentState, false);
   });
 
   if (isSyncEnabled()) {
