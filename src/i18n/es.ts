@@ -12,9 +12,11 @@ export const es: Translations = {
   welcome: 'Bienvenido',
 
   newAgenda: 'Nueva Agenda',
+  agenda: 'Agenda',
   library: 'Biblioteca',
   domains: 'Directorio de Temas',
   preview: 'Vista Previa',
+  previewExport: 'Vista Previa / Exportar',
   about: 'Acerca de',
 
   projectInformation: 'Datos del Encabezado de Agenda',
@@ -333,4 +335,19 @@ export const es: Translations = {
   shareLeave: 'Salir de la Sala',
   shareJoining: 'Uniéndose a la sala…',
   shareConnected: 'Conectado a la sala',
+
+  sundries: 'Varios',
+  topics: 'Temas',
+  dayStartTime: 'Inicio',
+  dayAdjournTime: 'Cierre',
+  compressedMode: 'Compacto',
+  arrangeTimes: 'Ordenar horarios',
+  timesArranged: 'Horarios ordenados',
+  pauseWarning: 'Más de 2,5 horas sin un descanso programado',
+  aboutToolsTitle: 'Construido con',
+  aboutToolsDescription: 'Tempo está construido con Vite, TypeScript, jsPDF, docx y FileSaver.js. La sincronización en la nube y la colaboración en tiempo real utilizan Cloudflare Workers, KV y Durable Objects. La interfaz sigue un diseño inspirado en LCARS.',
+  documents: 'Documentos',
+  templates: 'Plantillas',
+  saveAsTemplate: 'Guardar como plantilla',
+  noTemplates: '¡Aún no hay plantillas. Guarde una agenda como plantilla para reutilizarla!',
 };

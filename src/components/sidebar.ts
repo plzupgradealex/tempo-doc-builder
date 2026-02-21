@@ -14,7 +14,7 @@ const VIEW_I18N_KEYS: Record<ViewName, keyof Translations> = {
   agenda: 'newAgenda',
   library: 'library',
   domains: 'domains',
-  preview: 'preview',
+  preview: 'previewExport',
   about: 'about',
 };
 
@@ -27,7 +27,14 @@ export function initSidebar(): void {
     buttons.forEach((btn) => {
       const view = btn.dataset.view as ViewName;
       if (view && VIEW_I18N_KEYS[view]) {
-        btn.textContent = trek(t(VIEW_I18N_KEYS[view]), isTrek);
+        if (view === 'agenda') {
+          // Contextual: show "Agenda" when one is loaded, "New Agenda" when none
+          const hasAgenda = !!getState().currentAgenda;
+          const key = hasAgenda ? 'agenda' : 'newAgenda';
+          btn.textContent = trek(t(key), isTrek);
+        } else {
+          btn.textContent = trek(t(VIEW_I18N_KEYS[view]), isTrek);
+        }
       }
     });
   }
@@ -55,6 +62,8 @@ export function initSidebar(): void {
   // Update labels on Trek mode or locale change
   on('trek-mode-changed', updateLabels);
   on('locale-changed', updateLabels);
+  on('agenda-changed', updateLabels);
+  on('agenda-loaded', updateLabels);
 
   // Initial labels
   updateLabels();

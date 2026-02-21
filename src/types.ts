@@ -103,6 +103,8 @@ export interface KnowledgeDomain {
   defaultBulletPoints: string[];
   recommendedAttendees: string[];
   isDefault: boolean;
+  defaultDuration?: number;  // minutes, default 120 for topics, 30 for sundries
+  category?: 'topic' | 'sundry';  // used for topic picker sub-menus
 }
 
 // ─── Agenda (Full Document) ───
@@ -112,6 +114,7 @@ export interface Agenda {
   name: string;
   createdAt: string;
   updatedAt: string;
+  isTemplate?: boolean;
   header: AgendaHeader;
   travel: TravelInfo;
   preWork: PreWorkNeeds;

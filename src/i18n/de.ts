@@ -12,9 +12,11 @@ export const de: Translations = {
   welcome: 'Willkommen',
 
   newAgenda: 'Neue Agenda',
+  agenda: 'Agenda',
   library: 'Bibliothek',
   domains: 'Themenverzeichnis',
   preview: 'Vorschau',
+  previewExport: 'Vorschau / Export',
   about: 'Info',
 
   projectInformation: 'Agendakopfdaten',
@@ -333,4 +335,19 @@ export const de: Translations = {
   shareLeave: 'Raum verlassen',
   shareJoining: 'Raum wird beigetreten…',
   shareConnected: 'Verbunden mit Raum',
+
+  sundries: 'Verschiedenes',
+  topics: 'Themen',
+  dayStartTime: 'Beginn',
+  dayAdjournTime: 'Schluss',
+  compressedMode: 'Kompakt',
+  arrangeTimes: 'Zeiten ordnen',
+  timesArranged: 'Zeiten geordnet',
+  pauseWarning: 'Mehr als 2,5 Stunden ohne eingeplante Pause',
+  aboutToolsTitle: 'Erstellt mit',
+  aboutToolsDescription: 'Tempo wurde mit Vite, TypeScript, jsPDF, docx und FileSaver.js erstellt. Cloud-Synchronisation und Echtzeit-Zusammenarbeit nutzen Cloudflare Workers, KV und Durable Objects. Die Benutzeroberfläche folgt einem LCARS-inspirierten Design.',
+  documents: 'Dokumente',
+  templates: 'Vorlagen',
+  saveAsTemplate: 'Als Vorlage speichern',
+  noTemplates: 'Noch keine Vorlagen. Speichern Sie eine Agenda als Vorlage!',
 };

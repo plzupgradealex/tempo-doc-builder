@@ -33,6 +33,8 @@ export function getDefaultDomains(): KnowledgeDomain[] {
         t('attendeeAPSpecialist'),
       ],
       isDefault: true,
+      defaultDuration: 120,
+      category: 'topic',
     },
     {
       id: 'inventory',
@@ -51,6 +53,8 @@ export function getDefaultDomains(): KnowledgeDomain[] {
         t('attendeeLogisticsCoordinator'),
       ],
       isDefault: true,
+      defaultDuration: 120,
+      category: 'topic',
     },
     {
       id: 'production',
@@ -69,6 +73,8 @@ export function getDefaultDomains(): KnowledgeDomain[] {
         t('attendeeShopFloorSupervisor'),
       ],
       isDefault: true,
+      defaultDuration: 120,
+      category: 'topic',
     },
     {
       id: 'cutting',
@@ -87,6 +93,8 @@ export function getDefaultDomains(): KnowledgeDomain[] {
         t('attendeeProcessEngineer'),
       ],
       isDefault: true,
+      defaultDuration: 120,
+      category: 'topic',
     },
     {
       id: 'finance',
@@ -105,6 +113,8 @@ export function getDefaultDomains(): KnowledgeDomain[] {
         t('attendeeAPARSpecialist'),
       ],
       isDefault: true,
+      defaultDuration: 120,
+      category: 'topic',
     },
     {
       id: 'sales',
@@ -123,6 +133,8 @@ export function getDefaultDomains(): KnowledgeDomain[] {
         t('attendeeLogisticsCoordinator'),
       ],
       isDefault: true,
+      defaultDuration: 120,
+      category: 'topic',
     },
     {
       id: 'livestock',
@@ -141,6 +153,8 @@ export function getDefaultDomains(): KnowledgeDomain[] {
         t('attendeeProducerRelationsManager'),
       ],
       isDefault: true,
+      defaultDuration: 120,
+      category: 'topic',
     },
     {
       id: 'debrief',
@@ -158,6 +172,8 @@ export function getDefaultDomains(): KnowledgeDomain[] {
         t('attendeeDebriefTeamLead'),
       ],
       isDefault: true,
+      defaultDuration: 30,
+      category: 'sundry',
     },
     {
       id: 'qa',
@@ -172,6 +188,8 @@ export function getDefaultDomains(): KnowledgeDomain[] {
       ],
       recommendedAttendees: [],
       isDefault: true,
+      defaultDuration: 120,
+      category: 'topic',
     },
     {
       id: 'maintenance',
@@ -186,6 +204,8 @@ export function getDefaultDomains(): KnowledgeDomain[] {
       ],
       recommendedAttendees: [],
       isDefault: true,
+      defaultDuration: 120,
+      category: 'topic',
     },
     {
       id: 'travel',
@@ -195,6 +215,8 @@ export function getDefaultDomains(): KnowledgeDomain[] {
       defaultBulletPoints: [],
       recommendedAttendees: [],
       isDefault: true,
+      defaultDuration: 60,
+      category: 'sundry',
     },
     {
       id: 'kickoff',
@@ -204,6 +226,8 @@ export function getDefaultDomains(): KnowledgeDomain[] {
       defaultBulletPoints: [],
       recommendedAttendees: [],
       isDefault: true,
+      defaultDuration: 30,
+      category: 'sundry',
     },
     {
       id: 'plant-tour',
@@ -223,6 +247,8 @@ export function getDefaultDomains(): KnowledgeDomain[] {
         t('attendeeWarehouseManager'),
       ],
       isDefault: true,
+      defaultDuration: 120,
+      category: 'sundry',
     },
   ];
 }

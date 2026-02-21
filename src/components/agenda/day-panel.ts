@@ -75,18 +75,24 @@ export function renderDayPanel(
       <div class="lcars-panel-indicator" style="background: var(--lcars-blue);"></div>
       <span class="day-panel-title">${t('day')} ${dayIndex + 1}: ${formatDateLong(day.date)}</span>
       <input type="date" class="lcars-input day-panel-date-input" value="${day.date}">
+      <div class="day-panel-time-inputs" style="display:flex;gap:6px;align-items:center;">
+        <label style="font-size:11px;color:var(--lcars-text-muted);letter-spacing:1px;">${t('dayStartTime')}</label>
+        <input type="time" class="lcars-input day-start-time" value="${day.dayStartTime}" style="width:90px;font-size:13px;">
+        <label style="font-size:11px;color:var(--lcars-text-muted);letter-spacing:1px;">${t('dayAdjournTime')}</label>
+        <input type="time" class="lcars-input day-adjourn-time" value="${day.adjournTime}" style="width:90px;font-size:13px;">
+      </div>
       <div class="day-panel-actions">
         <button class="lcars-btn small primary" data-action="add-topic" title="${t('addTopic')}">
           <i class="fa-solid fa-plus"></i> ${t('topic')}
         </button>
-        <button class="lcars-btn small" data-action="add-pause" title="${t('addPause')}">
-          <i class="fa-solid fa-mug-hot"></i> ${t('pause')}
-        </button>
-        <button class="lcars-btn small" data-action="add-plant-tour" title="${t('addPlantTour')}">
-          <i class="fa-solid fa-person-walking"></i> ${t('plantTour')}
-        </button>
         <button class="lcars-btn small" data-action="add-custom" title="${t('addCustom')}">
           <i class="fa-solid fa-pen-to-square"></i> ${t('custom')}
+        </button>
+        <button class="lcars-btn small" data-action="arrange-times" title="${t('arrangeTimes')}" style="--btn-bg: var(--lcars-teal);">
+          <i class="fa-solid fa-arrows-up-down"></i> ${t('arrangeTimes')}
+        </button>
+        <button class="lcars-btn small" data-action="toggle-compact" title="${t('compressedMode')}">
+          <i class="fa-solid fa-compress"></i> ${t('compressedMode')}
         </button>
       </div>
     </div>
@@ -105,6 +111,33 @@ export function renderDayPanel(
     updateAgenda({ days: getState().currentAgenda!.days });
   });
 
+  // Day start time change
+  const startTimeInput = panel.querySelector('.day-start-time') as HTMLInputElement;
+  startTimeInput.addEventListener('change', () => {
+    day.dayStartTime = startTimeInput.value;
+    // Update the first event's start time if it's orientation
+    if (day.events[0]?.type === 'orientation') {
+      day.events[0].startTime = day.dayStartTime;
+      day.events[0].endTime = addMinutes(day.dayStartTime, day.events[0].duration);
+    }
+    updateAgenda({ days: getState().currentAgenda!.days });
+    renderEvents(day, eventsContainer);
+  });
+
+  // Day adjourn time change
+  const adjournTimeInput = panel.querySelector('.day-adjourn-time') as HTMLInputElement;
+  adjournTimeInput.addEventListener('change', () => {
+    day.adjournTime = adjournTimeInput.value;
+    // Update the adjourn event
+    const adjournEvent = day.events.find((e) => e.type === 'adjourn');
+    if (adjournEvent) {
+      adjournEvent.startTime = day.adjournTime;
+      adjournEvent.endTime = day.adjournTime;
+    }
+    updateAgenda({ days: getState().currentAgenda!.days });
+    renderEvents(day, eventsContainer);
+  });
+
   // Render events
   const eventsContainer = panel.querySelector('.day-events') as HTMLElement;
   renderEvents(day, eventsContainer);
@@ -120,6 +153,7 @@ export function renderDayPanel(
       const lastNonAdjourn = day.events.filter((ev) => ev.type !== 'adjourn');
       const lastEvent = lastNonAdjourn[lastNonAdjourn.length - 1];
       const startTime = lastEvent ? lastEvent.endTime : day.dayStartTime;
+      const duration = domain.defaultDuration ?? 120;
 
       const newEvent: AgendaEvent = {
         id: uid(),
@@ -129,8 +163,8 @@ export function renderDayPanel(
         description: domain.description,
         bulletPoints: [...domain.defaultBulletPoints],
         startTime,
-        endTime: addMinutes(startTime, 60),
-        duration: 60,
+        endTime: addMinutes(startTime, duration),
+        duration,
         attendees: domain.recommendedAttendees.map((r) => ({ name: '', role: r })),
       };
 
@@ -196,69 +230,21 @@ export function renderDayPanel(
     emit('open-topic-picker', { dayId: day.id });
   });
 
-  // Add Pause / Meal break button
-  panel.querySelector('[data-action="add-pause"]')!.addEventListener('click', () => {
-    const lastNonAdjourn = day.events.filter((ev) => ev.type !== 'adjourn');
-    const lastEvent = lastNonAdjourn[lastNonAdjourn.length - 1];
-    const startTime = lastEvent ? lastEvent.endTime : day.dayStartTime;
-
-    const pauseEvent: AgendaEvent = {
-      id: uid(),
-      type: 'pause',
-      title: t('lunchBreak'),
-      description: '',
-      bulletPoints: [],
-      startTime,
-      endTime: addMinutes(startTime, 60),
-      duration: 60,
-      attendees: [],
-    };
-
-    const adjournIdx = day.events.findIndex((ev) => ev.type === 'adjourn');
-    if (adjournIdx >= 0) {
-      const insertIdx = findInsertionIndex(day.events, 'pause');
-      day.events.splice(insertIdx, 0, pauseEvent);
-    } else {
-      day.events.push(pauseEvent);
-    }
-
+  // Arrange Times — recalculate all event times sequentially
+  panel.querySelector('[data-action="arrange-times"]')!.addEventListener('click', () => {
+    recalculateTimes(day);
     updateAgenda({ days: getState().currentAgenda!.days });
     emit('day-updated', { dayId: day.id });
   });
 
-  // Add Plant Tour button
-  panel.querySelector('[data-action="add-plant-tour"]')!.addEventListener('click', () => {
-    const domains = getState().domains;
-    const plantTourDomain = domains.find((d) => d.id === 'plant-tour');
-    const lastNonAdjourn = day.events.filter((ev) => ev.type !== 'adjourn');
-    const lastEvent = lastNonAdjourn[lastNonAdjourn.length - 1];
-    const startTime = lastEvent ? lastEvent.endTime : day.dayStartTime;
-
-    const tourEvent: AgendaEvent = {
-      id: uid(),
-      type: 'plant-tour',
-      topicDomainId: 'plant-tour',
-      title: plantTourDomain?.name ?? t('plantTour'),
-      description: plantTourDomain?.description ?? '',
-      bulletPoints: plantTourDomain ? [...plantTourDomain.defaultBulletPoints] : [],
-      startTime,
-      endTime: addMinutes(startTime, 120),
-      duration: 120,
-      attendees: plantTourDomain
-        ? plantTourDomain.recommendedAttendees.map((r) => ({ name: '', role: r }))
-        : [],
-    };
-
-    const adjournIdx = day.events.findIndex((ev) => ev.type === 'adjourn');
-    if (adjournIdx >= 0) {
-      const insertIdx = findInsertionIndex(day.events, 'plant-tour');
-      day.events.splice(insertIdx, 0, tourEvent);
-    } else {
-      day.events.push(tourEvent);
-    }
-
-    updateAgenda({ days: getState().currentAgenda!.days });
-    emit('day-updated', { dayId: day.id });
+  // Toggle compact/compressed mode
+  panel.querySelector('[data-action="toggle-compact"]')!.addEventListener('click', () => {
+    eventsContainer.classList.toggle('compact-mode');
+    const btn = panel.querySelector('[data-action="toggle-compact"]') as HTMLButtonElement;
+    const isCompact = eventsContainer.classList.contains('compact-mode');
+    btn.innerHTML = isCompact
+      ? `<i class="fa-solid fa-expand"></i> ${t('compressedMode')}`
+      : `<i class="fa-solid fa-compress"></i> ${t('compressedMode')}`;
   });
 
   // Add Custom Event button
@@ -325,10 +311,41 @@ function renderEvents(day: AgendaDay, container: HTMLElement): void {
     container.appendChild(banner);
   }
 
+  // Check for >2.5 hour gaps without a pause
+  const pauseWarnings = detectPauseGaps(day);
+  if (pauseWarnings.length > 0) {
+    const banner = document.createElement('div');
+    banner.className = 'pause-warning';
+    banner.innerHTML = `
+      <i class="fa-solid fa-clock"></i>
+      <span>${t('pauseWarning')}</span>
+    `;
+    container.appendChild(banner);
+  }
+
   day.events.forEach((event, idx) => {
     const card = renderEventCard(event, day, container);
     if (overlappingIndices.has(idx)) {
       card.classList.add('overlap');
     }
   });
+}
+
+/** Detect gaps >150 minutes without a pause-type event */
+function detectPauseGaps(day: AgendaDay): Array<{ from: string; to: string }> {
+  const gaps: Array<{ from: string; to: string }> = [];
+  let lastPauseEnd = day.dayStartTime;
+
+  for (const event of day.events) {
+    if (event.type === 'adjourn') continue;
+    if (event.type === 'pause') {
+      lastPauseEnd = event.endTime;
+      continue;
+    }
+    const gapMinutes = timeToMinutes(event.endTime) - timeToMinutes(lastPauseEnd);
+    if (gapMinutes > 150) {
+      gaps.push({ from: lastPauseEnd, to: event.startTime });
+    }
+  }
+  return gaps;
 }

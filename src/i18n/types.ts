@@ -18,9 +18,11 @@ export interface Translations {
 
   // Navigation
   newAgenda: string;
+  agenda: string;
   library: string;
   domains: string;
   preview: string;
+  previewExport: string;
   about: string;
 
   // Header form
@@ -356,4 +358,32 @@ export interface Translations {
   shareLeave: string;
   shareJoining: string;
   shareConnected: string;
+
+  // Topic picker sub-menus
+  sundries: string;
+  topics: string;
+
+  // Day header
+  dayStartTime: string;
+  dayAdjournTime: string;
+
+  // Compressed mode
+  compressedMode: string;
+
+  // Arrange times
+  arrangeTimes: string;
+  timesArranged: string;
+
+  // Pause warning
+  pauseWarning: string;
+
+  // About — tools
+  aboutToolsTitle: string;
+  aboutToolsDescription: string;
+
+  // Library sections
+  documents: string;
+  templates: string;
+  saveAsTemplate: string;
+  noTemplates: string;
 }

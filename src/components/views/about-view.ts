@@ -32,6 +32,20 @@ function renderAbout(container: HTMLElement): void {
           <strong>Tempo</strong> — ${t('aboutDescription')}
         </p>
 
+        <div style="background: rgba(255, 153, 0, 0.08); border-left: 4px solid var(--lcars-orange); padding: 16px; border-radius: 0 8px 8px 0; margin: 20px 0;">
+          <p style="margin: 0 0 12px 0;">
+            <strong style="color: var(--lcars-orange);">${t('aboutToolsTitle')}</strong>
+          </p>
+          <p style="margin: 0 0 12px 0; font-size: 14px; color: var(--lcars-text);">
+            ${t('aboutToolsDescription')}
+          </p>
+          <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+            ${['Vite', 'TypeScript', 'jsPDF', 'docx', 'FileSaver.js', 'Cloudflare Workers', 'Cloudflare KV', 'Durable Objects'].map(tool =>
+              `<span style="display:inline-block;padding:4px 12px;background:rgba(255,153,0,0.12);border-radius:12px;font-size:12px;color:var(--lcars-orange);letter-spacing:1px;">${tool}</span>`
+            ).join('')}
+          </div>
+        </div>
+
         <div style="background: rgba(102, 204, 204, 0.1); border-left: 4px solid var(--lcars-teal); padding: 16px; border-radius: 0 8px 8px 0; margin: 20px 0;">
           <p style="margin: 0;">
             <strong style="color: var(--lcars-teal);">${t('privacyTitle')}</strong><br><br>

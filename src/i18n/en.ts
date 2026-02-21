@@ -14,9 +14,11 @@ export const en: Translations = {
 
   // Navigation
   newAgenda: 'New Agenda',
+  agenda: 'Agenda',
   library: 'Library',
   domains: 'Topic Directory',
   preview: 'Preview',
+  previewExport: 'Preview / Export',
   about: 'About',
 
   // Header form
@@ -351,4 +353,32 @@ export const en: Translations = {
   shareLeave: 'Leave Room',
   shareJoining: 'Joining room…',
   shareConnected: 'Connected to room',
+
+  // Topic picker sub-menus
+  sundries: 'Sundries',
+  topics: 'Topics',
+
+  // Day header
+  dayStartTime: 'Start',
+  dayAdjournTime: 'Adjourn',
+
+  // Compressed mode
+  compressedMode: 'Compact',
+
+  // Arrange times
+  arrangeTimes: 'Arrange Times',
+  timesArranged: 'Times arranged',
+
+  // Pause warning
+  pauseWarning: 'More than 2.5 hours without a scheduled break',
+
+  // About — tools
+  aboutToolsTitle: 'Built With',
+  aboutToolsDescription: 'Tempo is built with Vite, TypeScript, jsPDF, docx, and FileSaver.js. Cloud sync and real-time collaboration use Cloudflare Workers, KV, and Durable Objects. The UI follows an LCARS-inspired design system.',
+
+  // Library sections
+  documents: 'Documents',
+  templates: 'Templates',
+  saveAsTemplate: 'Save as Template',
+  noTemplates: 'No templates yet. Save an agenda as a template to reuse it!',
 };

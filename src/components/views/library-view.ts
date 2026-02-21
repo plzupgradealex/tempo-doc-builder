@@ -3,6 +3,7 @@
  * Load, delete, export as JSON, cloud sync panel.
  */
 
+import type { Agenda } from '../../types';
 import { setAgenda } from '../../state';
 import { emit, on } from '../../bus';
 import { listAgendas, deleteAgenda, exportAgendaToJSON, importAgendaFromJSON } from '../../storage';
@@ -26,7 +27,7 @@ async function renderLibrary(container: HTMLElement): Promise<void> {
     <div class="lcars-panel">
       <div class="lcars-panel-header">
         <div class="lcars-panel-indicator" style="background: var(--lcars-purple);"></div>
-        <h2 class="lcars-panel-title">${t('savedAgendas')}</h2>
+        <h2 class="lcars-panel-title">${t('documents')}</h2>
       </div>
       <div style="display:flex; gap:8px; margin-bottom:16px;">
         <button class="lcars-btn accent lcars-shaped" id="lib-import">
@@ -34,7 +35,16 @@ async function renderLibrary(container: HTMLElement): Promise<void> {
         </button>
         <input type="file" id="lib-import-input" accept=".json" style="display:none;">
       </div>
-      <div class="library-grid" id="library-grid">
+      <div class="library-grid" id="library-grid-docs">
+        <div class="lcars-loading"><div class="lcars-spinner"></div></div>
+      </div>
+    </div>
+    <div class="lcars-panel" style="margin-top: 16px;">
+      <div class="lcars-panel-header">
+        <div class="lcars-panel-indicator" style="background: var(--lcars-gold);"></div>
+        <h2 class="lcars-panel-title">${t('templates')}</h2>
+      </div>
+      <div class="library-grid" id="library-grid-templates">
         <div class="lcars-loading"><div class="lcars-spinner"></div></div>
       </div>
     </div>
@@ -64,75 +74,107 @@ async function renderLibrary(container: HTMLElement): Promise<void> {
 
   // Load agendas
   try {
-    const agendas = await listAgendas();
-    const grid = container.querySelector('#library-grid')!;
+    const allAgendas = await listAgendas();
+    const docs = allAgendas.filter((a) => !a.isTemplate);
+    const templates = allAgendas.filter((a) => a.isTemplate);
 
-    if (agendas.length === 0) {
-      grid.innerHTML = `
+    const docsGrid = container.querySelector('#library-grid-docs')!;
+    const templatesGrid = container.querySelector('#library-grid-templates')!;
+
+    if (docs.length === 0) {
+      docsGrid.innerHTML = `
         <div class="empty-state">
           <div class="empty-state-icon">📚</div>
           <div class="empty-state-text">${t('noSavedAgendas')}</div>
         </div>
       `;
-      return;
+    } else {
+      docsGrid.innerHTML = '';
+      docs.sort((a, b) => b.updatedAt.localeCompare(a.updatedAt));
+      docs.forEach((agenda) => {
+        docsGrid.appendChild(renderAgendaCard(agenda, container));
+      });
     }
 
-    grid.innerHTML = '';
-    agendas.sort((a, b) => b.updatedAt.localeCompare(a.updatedAt));
-
-    agendas.forEach((agenda) => {
-      const card = document.createElement('div');
-      card.className = 'library-card';
-      const updated = new Date(agenda.updatedAt).toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit',
-      });
-
-      card.innerHTML = `
-        <div class="library-card-title">${agenda.name || t('untitledAgenda')}</div>
-        <div class="library-card-meta">
-          ${agenda.header.projectName ? `${t('project')}: ${agenda.header.projectName}<br>` : ''}
-          ${agenda.days.length} ${t('dayCount')} · ${t('updated')}: ${updated}
-        </div>
-        <div class="library-card-actions">
-          <button class="lcars-btn small primary" data-action="load">${t('load')}</button>
-          <button class="lcars-btn small teal" data-action="export">${t('exportJson')}</button>
-          <button class="lcars-btn small danger" data-action="delete">${t('delete')}</button>
+    if (templates.length === 0) {
+      templatesGrid.innerHTML = `
+        <div class="empty-state">
+          <div class="empty-state-icon">📋</div>
+          <div class="empty-state-text">${t('noTemplates')}</div>
         </div>
       `;
-
-      card.querySelector('[data-action="load"]')!.addEventListener('click', () => {
-        setAgenda(structuredClone(agenda));
-        setView('agenda');
-        emit('agenda-loaded', {});
+    } else {
+      templatesGrid.innerHTML = '';
+      templates.sort((a, b) => b.updatedAt.localeCompare(a.updatedAt));
+      templates.forEach((agenda) => {
+        templatesGrid.appendChild(renderAgendaCard(agenda, container));
       });
-
-      card.querySelector('[data-action="export"]')!.addEventListener('click', () => {
-        exportAgendaToJSON(agenda);
-      });
-
-      card.querySelector('[data-action="delete"]')!.addEventListener('click', async () => {
-        if (confirm(t('deleteConfirm'))) {
-          await deleteAgenda(agenda.id);
-          renderLibrary(container);
-        }
-      });
-
-      grid.appendChild(card);
-    });
+    }
   } catch (e) {
     console.error('Failed to load library:', e);
-    const grid = container.querySelector('#library-grid')!;
-    grid.innerHTML = `
+    const docsGrid = container.querySelector('#library-grid-docs')!;
+    docsGrid.innerHTML = `
       <div class="lcars-alert">
         <div class="lcars-alert-title">${t('errorTitle')}</div>
         <div class="lcars-alert-message">${t('errorLoadAgendas')}</div>
       </div>
     `;
   }
+}
+
+function renderAgendaCard(agenda: Agenda, container: HTMLElement): HTMLElement {
+  const card = document.createElement('div');
+  card.className = 'library-card';
+  const updated = new Date(agenda.updatedAt).toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  });
+
+  card.innerHTML = `
+    <div class="library-card-title">
+      ${agenda.isTemplate ? '<i class="fa-solid fa-bookmark" style="color:var(--lcars-gold);margin-right:6px;"></i>' : ''}
+      ${agenda.name || t('untitledAgenda')}
+    </div>
+    <div class="library-card-meta">
+      ${agenda.header.projectName ? `${t('project')}: ${agenda.header.projectName}<br>` : ''}
+      ${agenda.days.length} ${t('dayCount')} · ${t('updated')}: ${updated}
+    </div>
+    <div class="library-card-actions">
+      <button class="lcars-btn small primary" data-action="load">${t('load')}</button>
+      <button class="lcars-btn small teal" data-action="export">${t('exportJson')}</button>
+      <button class="lcars-btn small danger" data-action="delete">${t('delete')}</button>
+    </div>
+  `;
+
+  card.querySelector('[data-action="load"]')!.addEventListener('click', () => {
+    const loaded = structuredClone(agenda);
+    if (agenda.isTemplate) {
+      // When loading a template, create a new document from it
+      loaded.id = crypto.randomUUID();
+      loaded.isTemplate = false;
+      loaded.createdAt = new Date().toISOString();
+      loaded.updatedAt = new Date().toISOString();
+    }
+    setAgenda(loaded);
+    setView('agenda');
+    emit('agenda-loaded', {});
+  });
+
+  card.querySelector('[data-action="export"]')!.addEventListener('click', () => {
+    exportAgendaToJSON(agenda);
+  });
+
+  card.querySelector('[data-action="delete"]')!.addEventListener('click', async () => {
+    if (confirm(t('deleteConfirm'))) {
+      await deleteAgenda(agenda.id);
+      renderLibrary(container);
+    }
+  });
+
+  return card;
 }
 
 /* ─── Sync Panel ─── */

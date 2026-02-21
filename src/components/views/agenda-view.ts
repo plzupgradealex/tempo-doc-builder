@@ -70,11 +70,11 @@ function renderAgendaView(container: HTMLElement): void {
       <i class="fa-solid fa-minus"></i> ${t('removeLastDay')}
     </button>
     <div style="flex:1;"></div>
-    <button class="lcars-btn lcars-shaped" id="btn-save-draft" style="--btn-bg: var(--lcars-gold);">
-      <i class="fa-solid fa-pen-to-square"></i> ${t('saveDraft')}
-    </button>
     <button class="lcars-btn teal lcars-shaped" id="btn-save-agenda">
       <i class="fa-solid fa-floppy-disk"></i> ${t('save')}
+    </button>
+    <button class="lcars-btn lcars-shaped" id="btn-save-template" style="--btn-bg: var(--lcars-gold);">
+      <i class="fa-solid fa-bookmark"></i> ${t('saveAsTemplate')}
     </button>
   `;
   scroll.appendChild(dayActions);
@@ -95,14 +95,6 @@ function renderAgendaView(container: HTMLElement): void {
     renderAllDays(daysContainer);
   });
 
-  document.getElementById('btn-save-draft')!.addEventListener('click', () => {
-    const agenda = getAgenda();
-    if (agenda) {
-      saveDraft(agenda);
-      showStatus(t('draftSaved'));
-    }
-  });
-
   document.getElementById('btn-save-agenda')!.addEventListener('click', async () => {
     const agenda = getAgenda();
     if (agenda) {
@@ -113,6 +105,20 @@ function renderAgendaView(container: HTMLElement): void {
     }
   });
 
+  document.getElementById('btn-save-template')!.addEventListener('click', async () => {
+    const agenda = getAgenda();
+    if (agenda) {
+      const template: Agenda = {
+        ...structuredClone(agenda),
+        id: uid(),
+        isTemplate: true,
+        updatedAt: new Date().toISOString(),
+      };
+      await saveAgenda(template);
+      showStatus(t('saveAsTemplate'));
+    }
+  });
+
   // Keyboard shortcuts
   document.addEventListener('keydown', (e) => {
     if ((e.ctrlKey || e.metaKey) && e.key === 's') {
@@ -120,6 +126,12 @@ function renderAgendaView(container: HTMLElement): void {
       document.getElementById('btn-save-agenda')?.click();
     }
   });
+
+  // Auto-save draft every 30 seconds
+  setInterval(() => {
+    const agenda = getAgenda();
+    if (agenda) saveDraft(agenda);
+  }, 30_000);
 }
 
 function renderAllDays(container: HTMLElement): void {
@@ -164,12 +176,24 @@ function createNewAgenda(): void {
     attendees: [],
   };
 
+  const lunchEvent: AgendaEvent = {
+    id: uid(),
+    type: 'pause',
+    title: t('lunchBreak'),
+    description: '',
+    bulletPoints: [],
+    startTime: '12:00',
+    endTime: '12:30',
+    duration: 30,
+    attendees: [],
+  };
+
   const day1: AgendaDay = {
     id: uid(),
     date: today,
     dayStartTime: '09:00',
     adjournTime: '17:00',
-    events: [orientationEvent, adjournEvent],
+    events: [orientationEvent, lunchEvent, adjournEvent],
   };
 
   const agenda: Agenda = {
@@ -244,6 +268,20 @@ function addDay(): void {
     adjournTime: '17:00',
     events: [adjournEvent],
   };
+
+  // Auto-add lunch break at noon
+  const lunchEvent: AgendaEvent = {
+    id: uid(),
+    type: 'pause',
+    title: t('lunchBreak'),
+    description: '',
+    bulletPoints: [],
+    startTime: '12:00',
+    endTime: '12:30',
+    duration: 30,
+    attendees: [],
+  };
+  newDay.events.unshift(lunchEvent);
 
   // Auto-add recap to the new last day (before adjourn)
   if (isLastDay) {

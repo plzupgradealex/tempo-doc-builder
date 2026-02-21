@@ -9,6 +9,7 @@
 import type { Agenda, KnowledgeDomain } from '../types';
 import { listAgendas, saveAgenda, loadCustomDomains, saveCustomDomains } from '../storage';
 import { hashPhrase, getSavedPhrase } from './passphrase';
+import { encrypt, decrypt } from './crypto';
 import { emit } from '../bus';
 
 /** The worker base URL — set via env or fall back to production. */
@@ -37,13 +38,15 @@ export async function pushLibrary(): Promise<void> {
     syncedAt: new Date().toISOString(),
   };
 
+  const encrypted = await encrypt(JSON.stringify(payload), phrase);
+
   const res = await fetch(`${API}/api/sync`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
       'X-Sync-Key': key,
     },
-    body: JSON.stringify(payload),
+    body: JSON.stringify({ encrypted }),
   });
 
   if (!res.ok) throw new Error(`Sync push failed: ${res.status}`);
@@ -64,7 +67,17 @@ export async function pullLibrary(): Promise<{ merged: number }> {
 
   if (!res.ok) throw new Error(`Sync pull failed: ${res.status}`);
 
-  const remote = (await res.json()) as SyncPayload;
+  const raw = await res.json();
+
+  // Support both encrypted and legacy unencrypted payloads
+  let remote: SyncPayload;
+  if (raw.encrypted) {
+    const decrypted = await decrypt(raw.encrypted, phrase);
+    remote = JSON.parse(decrypted) as SyncPayload;
+  } else {
+    remote = raw as SyncPayload;
+  }
+
   const localAgendas = await listAgendas();
 
   // Merge: union by id, newest updatedAt wins
