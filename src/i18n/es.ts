@@ -352,6 +352,7 @@ export const es: Translations = {
   arrangeTimes: 'Ordenar horarios',
   timesArranged: 'Horarios ordenados',
   pauseWarning: 'Más de 2,5 horas sin un descanso programado',
+  nightWarning: 'Eventos programados fuera del horario normal (antes de las 06:00 o después de las 21:00)',
   aboutToolsTitle: 'Construido con',
   aboutToolsDescription: 'Tempo está construido con Vite, TypeScript, jsPDF, docx y FileSaver.js. La sincronización en la nube y la colaboración en tiempo real utilizan Cloudflare Workers, KV y Durable Objects. La interfaz sigue un diseño inspirado en LCARS.',
   documents: 'Documentos',

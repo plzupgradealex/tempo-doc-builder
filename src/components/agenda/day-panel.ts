@@ -323,11 +323,35 @@ function renderEvents(day: AgendaDay, container: HTMLElement): void {
     container.appendChild(banner);
   }
 
+  // Check for events outside normal hours (before 06:00 or after 21:00)
+  const nightEvents = detectNightEvents(day);
+  if (nightEvents.length > 0) {
+    const banner = document.createElement('div');
+    banner.className = 'night-warning';
+    banner.innerHTML = `
+      <i class="fa-solid fa-moon"></i>
+      <span>${t('nightWarning')}</span>
+    `;
+    container.appendChild(banner);
+  }
+
   day.events.forEach((event, idx) => {
     const card = renderEventCard(event, day, container);
     if (overlappingIndices.has(idx)) {
       card.classList.add('overlap');
     }
+  });
+}
+
+/** Detect events scheduled outside normal hours (before 06:00 or after 21:00) */
+function detectNightEvents(day: AgendaDay): AgendaEvent[] {
+  const EARLY = 6 * 60;  // 06:00
+  const LATE = 21 * 60;  // 21:00
+  return day.events.filter((ev) => {
+    if (ev.type === 'adjourn') return false;
+    const start = timeToMinutes(ev.startTime);
+    const end = timeToMinutes(ev.endTime);
+    return start < EARLY || end > LATE;
   });
 }
 

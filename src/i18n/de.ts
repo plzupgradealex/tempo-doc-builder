@@ -352,6 +352,7 @@ export const de: Translations = {
   arrangeTimes: 'Zeiten ordnen',
   timesArranged: 'Zeiten geordnet',
   pauseWarning: 'Mehr als 2,5 Stunden ohne eingeplante Pause',
+  nightWarning: 'Termine außerhalb der üblichen Zeiten (vor 06:00 oder nach 21:00)',
   aboutToolsTitle: 'Erstellt mit',
   aboutToolsDescription: 'Tempo wurde mit Vite, TypeScript, jsPDF, docx und FileSaver.js erstellt. Cloud-Synchronisation und Echtzeit-Zusammenarbeit nutzen Cloudflare Workers, KV und Durable Objects. Die Benutzeroberfläche folgt einem LCARS-inspirierten Design.',
   documents: 'Dokumente',

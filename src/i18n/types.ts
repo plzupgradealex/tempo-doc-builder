@@ -382,8 +382,9 @@ export interface Translations {
   arrangeTimes: string;
   timesArranged: string;
 
-  // Pause warning
+  // Schedule warnings
   pauseWarning: string;
+  nightWarning: string;
 
   // About — tools
   aboutToolsTitle: string;

@@ -377,8 +377,9 @@ export const en: Translations = {
   arrangeTimes: 'Arrange Times',
   timesArranged: 'Times arranged',
 
-  // Pause warning
+  // Schedule warnings
   pauseWarning: 'More than 2.5 hours without a scheduled break',
+  nightWarning: 'Events scheduled outside normal hours (before 06:00 or after 21:00)',
 
   // About — tools
   aboutToolsTitle: 'Built With',

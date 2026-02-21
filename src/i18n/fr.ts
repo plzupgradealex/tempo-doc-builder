@@ -348,6 +348,7 @@ export const fr: Translations = {
   arrangeTimes: 'Ordonner les horaires',
   timesArranged: 'Horaires ordonnés',
   pauseWarning: 'Plus de 2,5 heures sans pause prévue',
+  nightWarning: 'Événements programmés en dehors des heures normales (avant 06h00 ou après 21h00)',
   aboutToolsTitle: 'Construit avec',
   aboutToolsDescription: 'Tempo est construit avec Vite, TypeScript, jsPDF, docx et FileSaver.js. La synchronisation cloud et la collaboration en temps réel utilisent Cloudflare Workers, KV et Durable Objects. L\'interface suit un design inspiré de LCARS.',
   documents: 'Documents',
