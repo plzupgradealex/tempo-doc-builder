@@ -1,26 +1,32 @@
 /**
- * WebAuthn Passkey — device-bound authentication for sync passphrase.
+ * WebAuthn Passkey — biometric-gated access to sync passphrase.
  *
  * Flow:
  *  1. User sets up sync passphrase (generate or enter)
  *  2. User registers a passkey on this device
  *     → passphrase is encrypted with a key derived from the passkey credential
- *     → encrypted blob is stored in localStorage
- *  3. On next visit, user authenticates with passkey → passphrase is decrypted
- *     → sync starts automatically
+ *     → encrypted blob is stored locally AND uploaded to CF KV (keyed by credential ID hash)
+ *  3. On any device, user authenticates with passkey (discoverable credential)
+ *     → blob is fetched from KV if not available locally
+ *     → passphrase is decrypted → sync starts automatically
  *
  * Cross-device: passkeys synced via iCloud Keychain / Google Password Manager
- * give the same credential on another device, so the encrypted passphrase
- * can be stored in KV as a fallback (keyed by credential ID).
+ * present the same credential ID on another device, so the server-stored blob
+ * can be fetched and decrypted there.
  *
  * Security model: the passphrase itself is the sync secret.  The passkey just
  * provides convenient, biometric-gated access to it on trusted devices.
+ * The encrypted blob is useless without the credential's rawId (held by the
+ * authenticator), so storing it on the server is safe.
  */
 
 const PASSKEY_STORAGE_KEY = 'tempo-passkey-credential';
 const PASSKEY_ENCRYPTED_KEY = 'tempo-passkey-encrypted-phrase';
 const RP_ID = location.hostname;
 const RP_NAME = 'Tempo Agenda Builder';
+
+const API = ((import.meta as unknown as { env: Record<string, string> }).env
+  ?.VITE_SYNC_API ?? 'https://tempo-sync.alex-31f.workers.dev');
 
 interface StoredCredential {
   credentialId: string; // base64url
@@ -94,6 +100,36 @@ async function deriveKey(credentialIdBuf: ArrayBuffer): Promise<CryptoKey> {
     false,
     ['encrypt', 'decrypt'],
   );
+}
+
+/** SHA-256 hash of a buffer, returned as lowercase hex. */
+async function sha256hex(buf: ArrayBuffer): Promise<string> {
+  const hash = await crypto.subtle.digest('SHA-256', buf);
+  return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+/** Upload encrypted blob to the worker, keyed by credential ID hash. */
+async function uploadBlob(credentialIdBuf: ArrayBuffer, blob: string): Promise<void> {
+  const hash = await sha256hex(credentialIdBuf);
+  try {
+    await fetch(`${API}/api/passkey`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ credentialIdHash: hash, blob }),
+    });
+  } catch { /* best-effort */ }
+}
+
+/** Fetch encrypted blob from the worker by credential ID hash. */
+async function fetchBlob(credentialIdBuf: ArrayBuffer): Promise<string | null> {
+  const hash = await sha256hex(credentialIdBuf);
+  try {
+    const res = await fetch(`${API}/api/passkey/${hash}`);
+    if (!res.ok) return null;
+    return await res.text();
+  } catch {
+    return null;
+  }
 }
 
 /** Encrypt the passphrase with a key derived from the credential. */
@@ -173,9 +209,10 @@ export async function registerPasskey(passphrase: string): Promise<boolean> {
     };
     localStorage.setItem(PASSKEY_STORAGE_KEY, JSON.stringify(stored));
 
-    // Encrypt and store the passphrase
+    // Encrypt and store the passphrase (local + server)
     const encrypted = await encryptPassphrase(passphrase, credential.rawId);
     localStorage.setItem(PASSKEY_ENCRYPTED_KEY, encrypted);
+    await uploadBlob(credential.rawId, encrypted);
 
     return true;
   } catch (err) {
@@ -191,21 +228,18 @@ export async function registerPasskey(passphrase: string): Promise<boolean> {
 export async function authenticateWithPasskey(): Promise<string | null> {
   if (!isPasskeySupported()) return null;
 
-  const stored = getStoredCredential();
-  const encrypted = localStorage.getItem(PASSKEY_ENCRYPTED_KEY);
-
-  if (!stored || !encrypted) return null;
-
   try {
-    const allowCredentials: PublicKeyCredentialDescriptor[] = [{
-      type: 'public-key',
-      id: base64urlToBuf(stored.credentialId),
-    }];
+    const stored = getStoredCredential();
+
+    // Build allowCredentials — empty if no local credential (discoverable flow)
+    const allowCredentials: PublicKeyCredentialDescriptor[] = stored
+      ? [{ type: 'public-key', id: base64urlToBuf(stored.credentialId) }]
+      : [];
 
     const assertion = await navigator.credentials.get({
       publicKey: {
         challenge: crypto.getRandomValues(new Uint8Array(32)),
-        allowCredentials,
+        ...(allowCredentials.length ? { allowCredentials } : {}),
         userVerification: 'required',
         timeout: 60_000,
         rpId: RP_ID,
@@ -214,8 +248,28 @@ export async function authenticateWithPasskey(): Promise<string | null> {
 
     if (!assertion) return null;
 
-    // Use the credential rawId to derive the decryption key
+    // Try local blob first, then fetch from server
+    let encrypted = localStorage.getItem(PASSKEY_ENCRYPTED_KEY);
+    if (!encrypted) {
+      encrypted = await fetchBlob(assertion.rawId);
+    }
+    if (!encrypted) return null;
+
+    // Decrypt passphrase
     const passphrase = await decryptPassphrase(encrypted, assertion.rawId);
+
+    // Cache locally for next time
+    const credentialId = bufToBase64url(assertion.rawId);
+    if (!stored || stored.credentialId !== credentialId) {
+      const newStored: StoredCredential = {
+        credentialId,
+        publicKey: '',
+        createdAt: new Date().toISOString(),
+      };
+      localStorage.setItem(PASSKEY_STORAGE_KEY, JSON.stringify(newStored));
+      localStorage.setItem(PASSKEY_ENCRYPTED_KEY, encrypted);
+    }
+
     return passphrase;
   } catch (err) {
     console.error('Passkey authentication failed:', err);

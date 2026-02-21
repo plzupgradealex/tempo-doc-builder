@@ -208,6 +208,7 @@ npm run test:e2e   # Playwright E2E (starts dev server automatically)
 
 ## Backlog
 
+- [ ] Rotate sync passphrase (re-encrypt data with new passphrase, update KV key, re-encrypt passkey blob)
 - [ ] Map-of-the-week visual (calendar strip showing all days at a glance)
 - [ ] Embed Antonio font in PDF for TNG-styled headers
 - [ ] Single-file HTML export (via vite-plugin-singlefile)

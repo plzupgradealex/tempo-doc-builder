@@ -75,7 +75,7 @@ function render(): void {
     <p style="color:var(--lcars-text-dim);margin-bottom:16px;font-size:14px;line-height:1.5;">${t('syncModalDesc')}</p>
 
     ${syncOn && phrase ? renderConnectedState(phrase, hasPasskey, passkeySupported)
-    : renderDisconnectedState(hasPasskey, passkeySupported)}
+    : renderDisconnectedState(passkeySupported)}
   `;
 
   wireHandlers();
@@ -126,7 +126,7 @@ function renderConnectedState(phrase: string, hasPasskey: boolean, passkeySuppor
   `;
 }
 
-function renderDisconnectedState(hasPasskey: boolean, passkeySupported: boolean): string {
+function renderDisconnectedState(passkeySupported: boolean): string {
   return `
     <!-- Not connected -->
     <div style="margin-bottom:16px;">
@@ -146,12 +146,15 @@ function renderDisconnectedState(hasPasskey: boolean, passkeySupported: boolean)
 
     <div id="sm-action-status" style="font-size:13px;color:var(--lcars-text-dim);min-height:20px;margin-bottom:16px;"></div>
 
-    ${hasPasskey && passkeySupported ? `
-      <!-- Passkey unlock -->
+    ${passkeySupported ? `
+      <!-- Passkey unlock (works cross-device via synced passkeys) -->
       <div style="border-top:1px solid rgba(102,204,204,0.15);padding-top:16px;">
         <button class="lcars-btn primary lcars-shaped" id="sm-passkey-unlock" style="width:100%;">
           <i class="fa-solid fa-fingerprint"></i> ${t('syncUsePasskey')}
         </button>
+        <div style="color:var(--lcars-text-dim);font-size:11px;margin-top:6px;text-align:center;">
+          Use a passkey saved on this device or synced from another
+        </div>
       </div>
     ` : ''}
   `;

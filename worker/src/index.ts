@@ -4,6 +4,8 @@
  * Routes:
  *   PUT  /api/sync        – push library to KV   (X-Sync-Key header)
  *   GET  /api/sync        – pull library from KV  (X-Sync-Key header)
+ *   PUT  /api/passkey     – store encrypted passphrase blob for cross-device passkey
+ *   GET  /api/passkey/:id – retrieve encrypted blob by credential ID hash
  *   GET  /api/room/:id    – WebSocket upgrade → Durable Object room
  */
 
@@ -179,6 +181,31 @@ export default {
       }
 
       return json({ error: 'Method not allowed' }, 405, origin);
+    }
+
+    // ── Passkey: encrypted passphrase blob for cross-device unlock ──
+    if (url.pathname === '/api/passkey' && request.method === 'PUT') {
+      const { credentialIdHash, blob } = (await request.json()) as { credentialIdHash: string; blob: string };
+      if (!credentialIdHash || !blob) {
+        return json({ error: 'Missing credentialIdHash or blob' }, 400, origin);
+      }
+      if (!/^[a-f0-9]{64}$/.test(credentialIdHash)) {
+        return json({ error: 'Invalid credential hash' }, 400, origin);
+      }
+      await env.SYNC_KV.put(`passkey:${credentialIdHash}`, blob);
+      return json({ ok: true }, 200, origin);
+    }
+
+    const passkeyGetMatch = url.pathname.match(/^\/api\/passkey\/([a-f0-9]{64})$/);
+    if (passkeyGetMatch && request.method === 'GET') {
+      const hash = passkeyGetMatch[1];
+      const blob = await env.SYNC_KV.get(`passkey:${hash}`);
+      if (!blob) {
+        return json({ error: 'Not found' }, 404, origin);
+      }
+      return new Response(blob, {
+        headers: { ...cors(origin), 'Content-Type': 'text/plain' },
+      });
     }
 
     // ── Room: Durable Object WebSocket ──
