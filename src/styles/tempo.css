@@ -1016,11 +1016,27 @@
 
 .compact-mode .event-card-top {
   gap: 6px;
+  align-items: center;
+}
+
+.compact-mode .event-card-indicator {
+  width: 4px;
 }
 
 .compact-mode .event-card-actions {
+  flex-direction: row;
   padding: 2px 4px;
   gap: 2px;
+}
+
+.compact-mode .event-card-action {
+  width: 24px;
+  height: 24px;
+  font-size: 12px;
+}
+
+.compact-mode .event-card-action.grip {
+  order: 9;
 }
 
 /* ─── Pause Warning Banner ─── */
