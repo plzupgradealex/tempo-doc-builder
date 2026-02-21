@@ -325,4 +325,30 @@ export const en: Translations = {
   draftRestore: 'Restore',
   draftDiscard: 'Discard',
   draftCleared: 'Draft discarded',
+
+  // Sync
+  syncTitle: 'Cloud Sync',
+  syncEnable: 'Enable Sync',
+  syncDisable: 'Disable Sync',
+  syncNow: 'Sync Now',
+  syncPhrase: 'Your Sync Phrase',
+  syncPhraseHint: 'Save this phrase — enter it on any device to access your library.',
+  syncEnterPhrase: 'Enter sync phrase',
+  syncCopied: 'Phrase copied to clipboard',
+  syncPushed: 'Library uploaded',
+  syncPulled: 'Library downloaded',
+  syncError: 'Sync failed',
+  syncSyncing: 'Syncing…',
+  syncDone: 'Sync complete',
+  syncMerged: 'agendas merged',
+  syncDisconnected: 'Sync disabled',
+
+  // Collab
+  shareAgenda: 'Share',
+  shareLink: 'Share link',
+  shareCopied: 'Link copied to clipboard',
+  sharePeers: 'peers connected',
+  shareLeave: 'Leave Room',
+  shareJoining: 'Joining room…',
+  shareConnected: 'Connected to room',
 };

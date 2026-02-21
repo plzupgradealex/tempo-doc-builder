@@ -10,6 +10,8 @@ import { exportAgendaToJSON } from '../../storage';
 import { formatDateLong } from '../../utils/time';
 import { t } from '../../i18n';
 import { faToSymbol } from '../../utils/icon-map';
+import { createRoomId, joinRoom, getRoomUrl } from '../../sync/collab-client';
+import type { RoomConnection } from '../../sync/collab-client';
 
 export function initPreviewView(): void {
   const container = document.getElementById('view-preview')!;
@@ -60,7 +62,11 @@ function renderPreview(container: HTMLElement): void {
         <button class="lcars-btn teal lcars-shaped" id="preview-export-json">
           <i class="fa-solid fa-file-code"></i> ${t('exportJson')}
         </button>
+        <button class="lcars-btn accent lcars-shaped" id="preview-share">
+          <i class="fa-solid fa-share-nodes"></i> ${t('shareAgenda')}
+        </button>
       </div>
+      <div id="share-status" style="display:none;padding:8px 14px;margin-bottom:8px;background:rgba(153,153,255,0.08);border-radius:6px;font-size:13px;color:var(--lcars-lavender);display:flex;align-items:center;gap:8px;"></div>
       <div class="preview-frame" id="preview-frame"></div>
     </div>
   `;
@@ -80,6 +86,46 @@ function renderPreview(container: HTMLElement): void {
 
   container.querySelector('#preview-export-json')!.addEventListener('click', () => {
     exportAgendaToJSON(agenda);
+  });
+
+  // Share button
+  let activeRoom: RoomConnection | null = null;
+  const shareBtn = container.querySelector('#preview-share')!;
+  const shareStatus = container.querySelector('#share-status') as HTMLElement;
+
+  shareBtn.addEventListener('click', async () => {
+    if (activeRoom) {
+      // Already sharing — leave room
+      activeRoom.leave();
+      activeRoom = null;
+      shareStatus.style.display = 'none';
+      shareBtn.innerHTML = `<i class="fa-solid fa-share-nodes"></i> ${t('shareAgenda')}`;
+      return;
+    }
+
+    const roomId = createRoomId();
+    const url = getRoomUrl(roomId);
+    activeRoom = joinRoom(roomId);
+
+    // Send current agenda to the room
+    activeRoom.sendUpdate(agenda);
+
+    // Copy link to clipboard
+    await navigator.clipboard.writeText(url);
+
+    shareStatus.style.display = 'flex';
+    shareStatus.innerHTML = `
+      <i class="fa-solid fa-link"></i>
+      <span>${t('shareCopied')}</span>
+      <code style="margin-left:auto;font-size:11px;opacity:0.7;">${roomId}</code>
+      <span id="peer-count" style="margin-left:8px;">1 ${t('sharePeers')}</span>
+    `;
+    shareBtn.innerHTML = `<i class="fa-solid fa-right-from-bracket"></i> ${t('shareLeave')}`;
+
+    activeRoom.onPeers((count) => {
+      const el = container.querySelector('#peer-count');
+      if (el) el.textContent = `${count} ${t('sharePeers')}`;
+    });
   });
 }
 

@@ -5,7 +5,7 @@
 
 import type { Agenda, AgendaDay, AgendaEvent } from '../../types';
 import { getState, setAgenda, updateAgenda, getAgenda } from '../../state';
-import { on } from '../../bus';
+import { on, emit } from '../../bus';
 import { uid } from '../../utils/id';
 import { todayISO, nextDay } from '../../utils/time';
 import { renderHeaderForm } from '../agenda/header-form';
@@ -108,6 +108,7 @@ function renderAgendaView(container: HTMLElement): void {
     if (agenda) {
       await saveAgenda(agenda);
       clearDraft(); // clear draft after full save
+      emit('agenda-saved', {});
       showStatus(t('agendaSaved'));
     }
   });

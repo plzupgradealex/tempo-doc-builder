@@ -330,4 +330,30 @@ export interface Translations {
   draftRestore: string;
   draftDiscard: string;
   draftCleared: string;
+
+  // Sync
+  syncTitle: string;
+  syncEnable: string;
+  syncDisable: string;
+  syncNow: string;
+  syncPhrase: string;
+  syncPhraseHint: string;
+  syncEnterPhrase: string;
+  syncCopied: string;
+  syncPushed: string;
+  syncPulled: string;
+  syncError: string;
+  syncSyncing: string;
+  syncDone: string;
+  syncMerged: string;
+  syncDisconnected: string;
+
+  // Collab
+  shareAgenda: string;
+  shareLink: string;
+  shareCopied: string;
+  sharePeers: string;
+  shareLeave: string;
+  shareJoining: string;
+  shareConnected: string;
 }

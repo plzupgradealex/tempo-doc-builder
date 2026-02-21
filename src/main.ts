@@ -15,10 +15,13 @@ import { initPreviewView } from './components/views/preview-view';
 import { initAboutView } from './components/views/about-view';
 import { initTopicPicker } from './components/agenda/topic-picker';
 import { loadCustomDomains } from './storage';
-import { setDomains, getState } from './state';
+import { setDomains, setAgenda, getState } from './state';
 import { on } from './bus';
 import { t } from './i18n';
 import { getUser, handleOIDCCallback } from './auth/auth';
+import { isSyncEnabled, syncLibrary, pushLibrary } from './sync/sync-client';
+import { getRoomIdFromUrl, joinRoom } from './sync/collab-client';
+import { setView } from './state';
 
 async function boot(): Promise<void> {
   // Load custom domains from IndexedDB if available
@@ -82,6 +85,26 @@ async function boot(): Promise<void> {
 
   // Auth: update welcome message
   initAuthUI();
+
+  // ── Cloud Sync: pull on boot if enabled ──
+  if (isSyncEnabled()) {
+    syncLibrary().catch(console.error);
+  }
+
+  // Auto-push after every save
+  on('agenda-saved', () => {
+    if (isSyncEnabled()) pushLibrary().catch(console.error);
+  });
+
+  // ── Collab: join room if ?room=... is in the URL ──
+  const roomId = getRoomIdFromUrl();
+  if (roomId) {
+    const room = joinRoom(roomId);
+    room.onUpdate((agenda) => {
+      setAgenda(agenda);
+      setView('agenda');
+    });
+  }
 }
 
 function initAuthUI(): void {

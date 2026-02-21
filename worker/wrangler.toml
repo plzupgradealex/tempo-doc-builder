@@ -1,0 +1,17 @@
+name = "tempo-sync"
+main = "src/index.ts"
+compatibility_date = "2025-02-01"
+
+[durable_objects]
+bindings = [
+  { name = "ROOMS", class_name = "Room" }
+]
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["Room"]
+
+[[kv_namespaces]]
+binding = "SYNC_KV"
+# ↓ Replace after running: wrangler kv namespace create SYNC_KV
+id = "ade044f798574843ac9acfac6fe34c82"
