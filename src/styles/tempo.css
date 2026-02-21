@@ -1,0 +1,996 @@
+/**
+ * Tempo — App-Specific Styles
+ * Styles for agenda builder, event cards, topic picker, forms, etc.
+ * The LCARS core design system is in lcars-core.css.
+ */
+
+/* ============================================================
+   TREK MODE TOGGLE
+   ============================================================ */
+
+.lcars-trek-toggle {
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  padding: 4px 12px;
+  border: none;
+  font-family: var(--lcars-font);
+  transition: all 0.2s ease;
+  background: var(--lcars-sky);
+  color: var(--lcars-black);
+}
+
+.lcars-trek-toggle:hover {
+  background: var(--lcars-blue);
+}
+
+.lcars-trek-toggle[data-trek="on"] {
+  background: var(--lcars-teal);
+  animation: trek-pulse 2s ease-in-out infinite;
+}
+
+@keyframes trek-pulse {
+  0%, 100% { background: var(--lcars-teal); }
+  50% { background: var(--lcars-blue); }
+}
+
+.lcars-theme-toggle {
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  padding: 4px 12px;
+  border: none;
+  font-family: var(--lcars-font);
+  transition: all 0.2s ease;
+  background: var(--lcars-lavender);
+  color: var(--lcars-black);
+}
+
+.lcars-theme-toggle:hover {
+  background: var(--lcars-purple);
+}
+
+/* ============================================================
+   AGENDA VIEW LAYOUT
+   ============================================================ */
+
+.agenda-scroll {
+  max-height: calc(100vh - 120px);
+  overflow-y: auto;
+  padding-right: 8px;
+}
+
+/* ============================================================
+   HEADER FORM
+   ============================================================ */
+
+.agenda-header-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px 20px;
+  padding: 8px 0;
+}
+
+.agenda-header-form .form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.agenda-header-form .form-group.wide {
+  grid-column: span 2;
+}
+
+/* ============================================================
+   PRE-WORK SECTION
+   ============================================================ */
+
+.prework-section {
+  padding: 8px 0;
+}
+
+.prework-output {
+  margin-top: 12px;
+  padding: 12px 16px;
+  background: color-mix(in srgb, var(--lcars-orange) 8%, transparent);
+  border-left: 4px solid var(--lcars-orange);
+  border-radius: 0 8px 8px 0;
+}
+
+.prework-output-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--lcars-orange);
+  margin-bottom: 8px;
+}
+
+.prework-output-item {
+  font-size: 13px;
+  color: var(--lcars-text);
+  text-transform: none;
+  letter-spacing: normal;
+  padding: 4px 0;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+/* ============================================================
+   TRAVEL FORM
+   ============================================================ */
+
+.travel-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 10px 16px;
+  padding: 8px 0;
+}
+
+.travel-form .form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+@media (max-width: 768px) {
+  .travel-form {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ============================================================
+   DAY PANEL
+   ============================================================ */
+
+.day-panel {
+  margin-bottom: 16px;
+}
+
+.day-panel-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.day-panel-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--lcars-blue);
+  letter-spacing: 2px;
+  flex: 1;
+}
+
+.day-panel-date-input {
+  max-width: 160px;
+  border-color: var(--lcars-blue);
+  font-size: 13px;
+  padding: 4px 8px;
+  min-height: 32px;
+}
+
+.day-panel-actions {
+  display: flex;
+  gap: 6px;
+}
+
+.day-events {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-height: 60px;
+  padding: 8px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+  transition: background 0.2s;
+}
+
+.day-events.drag-over {
+  background: color-mix(in srgb, var(--lcars-orange) 10%, transparent);
+  outline: 2px dashed var(--lcars-orange);
+  outline-offset: -2px;
+}
+
+.day-add-bar {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+/* ============================================================
+   EVENT CARD
+   ============================================================ */
+
+.event-card {
+  display: flex;
+  align-items: stretch;
+  background: rgba(20, 20, 35, 0.9);
+  border: 1px solid var(--lcars-tan);
+  border-radius: 4px 12px 4px 12px;
+  overflow: hidden;
+  transition: transform 0.1s, box-shadow 0.2s;
+  cursor: default;
+}
+
+.event-card:hover {
+  border-color: var(--lcars-orange);
+  box-shadow: 0 0 12px color-mix(in srgb, var(--lcars-orange) 15%, transparent);
+}
+
+.event-card.dragging {
+  opacity: 0.5;
+  transform: scale(0.98);
+}
+
+.event-card-indicator {
+  width: 8px;
+  flex-shrink: 0;
+}
+
+.event-card-indicator.orientation { background: var(--lcars-teal); }
+.event-card-indicator.topic       { background: var(--lcars-lavender); }
+.event-card-indicator.pause       { background: var(--lcars-peach); }
+.event-card-indicator.plant-tour  { background: #66cc99; }
+.event-card-indicator.adjourn     { background: var(--lcars-gold); }
+.event-card-indicator.recap       { background: var(--lcars-purple); }
+.event-card-indicator.custom      { background: var(--lcars-blue); }
+
+.event-card-content {
+  flex: 1;
+  padding: 10px 14px;
+  min-width: 0;
+}
+
+.event-card-top {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 4px;
+}
+
+.event-card-time {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--lcars-orange);
+  white-space: nowrap;
+  min-width: 110px;
+}
+
+.event-card-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--lcars-text);
+  letter-spacing: 1px;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.event-card-duration {
+  font-size: 11px;
+  color: var(--lcars-text-dim);
+  white-space: nowrap;
+}
+
+.event-card-description {
+  font-size: 12px;
+  color: var(--lcars-text-dim);
+  text-transform: none;
+  letter-spacing: normal;
+  line-height: 1.5;
+  margin-bottom: 4px;
+}
+
+.event-card-bullets {
+  list-style: none;
+  padding: 0;
+  margin: 4px 0;
+}
+
+.event-card-bullets li {
+  font-size: 12px;
+  color: var(--lcars-text);
+  text-transform: none;
+  letter-spacing: normal;
+  padding: 2px 0 2px 16px;
+  position: relative;
+}
+
+.event-card-bullets li::before {
+  content: '▸';
+  position: absolute;
+  left: 0;
+  color: var(--lcars-lavender);
+}
+
+.event-card-attendees {
+  font-size: 11px;
+  color: var(--lcars-text-dim);
+  text-transform: none;
+  letter-spacing: normal;
+  margin-top: 4px;
+}
+
+.event-card-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 6px;
+  align-items: center;
+  justify-content: center;
+}
+
+.event-card-action {
+  width: 30px;
+  height: 30px;
+  background: color-mix(in srgb, var(--lcars-tan) 30%, transparent);
+  border: none;
+  border-radius: 4px 10px 4px 10px;
+  color: var(--lcars-text-dim);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  transition: all 0.15s;
+}
+
+.event-card-action:hover {
+  background: var(--lcars-orange);
+  color: var(--lcars-black);
+}
+
+.event-card-action.delete:hover {
+  background: var(--lcars-red);
+  color: #fff;
+}
+
+.event-card-action.grip {
+  cursor: grab;
+}
+
+.event-card-action.grip:active {
+  cursor: grabbing;
+}
+
+/* ============================================================
+   EVENT EDIT INLINE
+   ============================================================ */
+
+.event-edit-inline {
+  background: rgba(20, 20, 35, 0.95);
+  border: 2px solid var(--lcars-lavender);
+  border-radius: 4px 16px 4px 16px;
+  padding: 16px;
+  margin-bottom: 8px;
+}
+
+.event-edit-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.event-edit-grid .form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.event-edit-bullets-editor {
+  margin: 8px 0;
+}
+
+.event-edit-bullet-row {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 4px;
+  align-items: center;
+}
+
+.event-edit-bullet-row input {
+  flex: 1;
+}
+
+.event-edit-attendees {
+  margin: 8px 0;
+}
+
+.event-edit-attendee-row {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 4px;
+  align-items: center;
+}
+
+.event-edit-attendee-row input {
+  flex: 1;
+}
+
+.event-edit-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  margin-top: 12px;
+}
+
+/* ============================================================
+   TOPIC PICKER (Modal)
+   ============================================================ */
+
+.topic-picker-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 12px;
+  padding: 8px 0;
+}
+
+.topic-card {
+  background: rgba(20, 20, 35, 0.8);
+  border: 2px solid var(--lcars-tan);
+  border-radius: 4px 16px 4px 16px;
+  padding: 16px;
+  cursor: grab;
+  transition: all 0.15s;
+}
+
+.topic-card:hover {
+  border-color: var(--lcars-orange);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px color-mix(in srgb, var(--lcars-orange) 20%, transparent);
+}
+
+.topic-card:active {
+  cursor: grabbing;
+}
+
+.topic-card-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.topic-card-icon {
+  width: 36px;
+  height: 36px;
+  background: var(--lcars-lavender);
+  color: var(--lcars-black);
+  border-radius: 4px 12px 4px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+.topic-card-name {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--lcars-peach);
+  letter-spacing: 1px;
+}
+
+.topic-card-desc {
+  font-size: 12px;
+  color: var(--lcars-text-dim);
+  text-transform: none;
+  letter-spacing: normal;
+  line-height: 1.5;
+}
+
+/* ============================================================
+   LIBRARY VIEW
+   ============================================================ */
+
+.library-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 12px;
+}
+
+.library-card {
+  background: rgba(20, 20, 35, 0.8);
+  border: 2px solid var(--lcars-tan);
+  border-radius: 4px 20px 4px 20px;
+  padding: 16px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.library-card:hover {
+  border-color: var(--lcars-orange);
+  background: rgba(30, 30, 50, 0.8);
+}
+
+.library-card-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--lcars-peach);
+  margin-bottom: 6px;
+}
+
+.library-card-meta {
+  font-size: 12px;
+  color: var(--lcars-text-dim);
+  text-transform: none;
+  letter-spacing: normal;
+}
+
+.library-card-actions {
+  display: flex;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+/* ============================================================
+   DOMAINS VIEW
+   ============================================================ */
+
+.domains-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 12px;
+}
+
+.domain-edit-card {
+  background: rgba(20, 20, 35, 0.8);
+  border: 2px solid var(--lcars-tan);
+  border-radius: 4px 20px 4px 20px;
+  padding: 16px;
+}
+
+.domain-edit-card .form-group {
+  margin-bottom: 10px;
+}
+
+/* ============================================================
+   PREVIEW VIEW
+   ============================================================ */
+
+.preview-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.preview-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.preview-frame {
+  background: #fff;
+  border-radius: 8px;
+  padding: 32px;
+  color: #000;
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  text-transform: none;
+  letter-spacing: normal;
+  font-size: 12px;
+  line-height: 1.6;
+  max-height: 60vh;
+  overflow-y: auto;
+}
+
+.preview-frame h1,
+.preview-frame h2,
+.preview-frame h3 {
+  font-family: 'Antonio', 'Helvetica Neue', sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+/* ============================================================
+   ABOUT VIEW
+   ============================================================ */
+
+.about-content {
+  max-width: 600px;
+  line-height: 1.8;
+  text-transform: none;
+}
+
+.about-content p {
+  margin-bottom: 16px;
+  font-size: 14px;
+}
+
+.about-content a {
+  color: var(--lcars-blue);
+  text-decoration: none;
+}
+
+.about-content a:hover {
+  text-decoration: underline;
+}
+
+/* ============================================================
+   EMPTY STATES
+   ============================================================ */
+
+.empty-state {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--lcars-text-dim);
+}
+
+.empty-state-icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+  opacity: 0.5;
+}
+
+.empty-state-text {
+  font-size: 16px;
+  text-transform: none;
+  letter-spacing: normal;
+}
+
+/* ============================================================
+   LCARS LANGUAGE PANEL (full-screen view)
+   ============================================================ */
+
+.lcars-lang-panel {
+  display: flex;
+  flex-direction: column;
+  max-width: 420px;
+  margin: 60px auto;
+}
+
+.lcars-lang-header {
+  display: flex;
+  align-items: stretch;
+  height: 50px;
+  gap: 3px;
+}
+
+.lcars-lang-header-cap {
+  width: 50px;
+  background: var(--lcars-tan);
+  border-radius: 25px 0 0 0;
+}
+
+.lcars-lang-header-title {
+  background: var(--lcars-tan);
+  color: var(--lcars-black);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 3px;
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  white-space: nowrap;
+}
+
+.lcars-lang-header-bar {
+  flex: 1;
+  background: var(--lcars-tan);
+  border-radius: 0 25px 25px 0;
+}
+
+.lcars-lang-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 3px 0 3px 53px;
+  background: linear-gradient(90deg, var(--lcars-text-dim) 0, var(--lcars-text-dim) 46px, transparent 46px);
+}
+
+.lcars-lang-btn {
+  display: flex;
+  align-items: center;
+  height: 52px;
+  padding: 0 24px;
+  background: color-mix(in srgb, var(--lcars-tan) 40%, transparent);
+  border: 1px solid color-mix(in srgb, var(--lcars-tan) 30%, transparent);
+  border-left: none;
+  border-radius: 0 26px 26px 0;
+  cursor: pointer;
+  font-family: var(--lcars-font);
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--lcars-text);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  transition: all 0.15s;
+}
+
+.lcars-lang-btn:hover {
+  background: color-mix(in srgb, var(--lcars-tan) 60%, transparent);
+  border-color: var(--lcars-tan);
+  padding-left: 32px;
+}
+
+.lcars-lang-btn.active {
+  background: var(--lcars-tan);
+  color: var(--lcars-black);
+  border-color: var(--lcars-tan);
+}
+
+.lcars-lang-btn.active:hover {
+  background: var(--lcars-peach);
+}
+
+.lcars-lang-footer {
+  display: flex;
+  align-items: stretch;
+  height: 30px;
+  gap: 3px;
+}
+
+.lcars-lang-footer-bar {
+  width: 46px;
+  background: var(--lcars-text-dim);
+  border-radius: 0 0 0 15px;
+}
+
+.lcars-lang-footer-cap {
+  flex: 1;
+  background: var(--lcars-tan);
+  border-radius: 0 15px 15px 0;
+}
+
+/* Translate icon in elbow */
+.lcars-elbow-bottom .lang-icon {
+  width: 24px;
+  height: 24px;
+  color: var(--lcars-black);
+}
+
+/* ============================================================
+   EVENT CARD TIME INPUTS (inline start/end time controls)
+   ============================================================ */
+
+.event-card-time-controls {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  flex-shrink: 0;
+}
+
+.event-card-time-sep {
+  color: var(--lcars-text-dim);
+  font-family: var(--lcars-font);
+  font-size: 12px;
+  padding: 0 2px;
+}
+
+.lcars-time-input {
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid color-mix(in srgb, var(--lcars-lavender) 25%, transparent);
+  border-radius: 6px;
+  color: var(--lcars-peach);
+  font-family: var(--lcars-font);
+  font-size: 12px;
+  padding: 2px 4px;
+  width: 78px;
+  cursor: pointer;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  color-scheme: dark;
+}
+
+.lcars-time-input:focus {
+  outline: none;
+  border-color: var(--lcars-orange);
+  box-shadow: 0 0 6px color-mix(in srgb, var(--lcars-orange) 40%, transparent);
+}
+
+.lcars-time-input:hover {
+  border-color: color-mix(in srgb, var(--lcars-lavender) 50%, transparent);
+}
+
+/* Custom time picker (dual select: hour + minute) */
+.lcars-time-picker {
+  display: inline-flex;
+  align-items: center;
+  gap: 1px;
+}
+
+.lcars-time-select {
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid color-mix(in srgb, var(--lcars-lavender) 25%, transparent);
+  color: var(--lcars-peach);
+  font-family: var(--lcars-font);
+  font-size: 12px;
+  padding: 2px 2px;
+  cursor: pointer;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  text-align: center;
+}
+
+.lcars-time-hour {
+  border-radius: 6px 0 0 6px;
+  width: 38px;
+}
+
+.lcars-time-min {
+  border-radius: 0 6px 6px 0;
+  width: 38px;
+}
+
+.lcars-time-select:focus {
+  outline: none;
+  border-color: var(--lcars-orange);
+  box-shadow: 0 0 6px color-mix(in srgb, var(--lcars-orange) 40%, transparent);
+}
+
+.lcars-time-select:hover {
+  border-color: color-mix(in srgb, var(--lcars-lavender) 50%, transparent);
+}
+
+.lcars-time-colon {
+  color: var(--lcars-peach);
+  font-family: var(--lcars-font);
+  font-size: 12px;
+  opacity: 0.6;
+  margin: 0 1px;
+}
+
+.lcars-time-select option {
+  background: #1a1a2e;
+  color: var(--lcars-peach);
+}
+
+/* ============================================================
+   RESPONSIVE ADJUSTMENTS
+   ============================================================ */
+
+@media (max-width: 768px) {
+  .agenda-header-form {
+    grid-template-columns: 1fr;
+  }
+
+  .agenda-header-form .form-group.wide {
+    grid-column: span 1;
+  }
+
+  .event-edit-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .topic-picker-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ============================================================
+   OVERLAP WARNING BANNER
+   ============================================================ */
+
+.overlap-warning {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 14px;
+  margin-bottom: 8px;
+  background: color-mix(in srgb, var(--lcars-red, #cc6666) 15%, transparent);
+  border-left: 4px solid var(--lcars-red, #cc6666);
+  border-radius: 0 8px 8px 0;
+  font-family: var(--lcars-font);
+  font-size: 13px;
+  color: var(--lcars-peach);
+  letter-spacing: 0.5px;
+}
+
+.overlap-warning-text {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.overlap-warning-text i {
+  color: var(--lcars-red, #cc6666);
+  font-size: 16px;
+}
+
+.overlap-fix-btn {
+  white-space: nowrap;
+}
+
+.event-card.overlap {
+  outline: 2px solid var(--lcars-red, #cc6666);
+  outline-offset: -2px;
+}
+
+/* ============================================================
+   FA ICON PICKER
+   ============================================================ */
+
+.icon-picker-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.icon-picker-dialog {
+  background: var(--lcars-bg, #1a1a2e);
+  border: 2px solid var(--lcars-orange);
+  border-radius: 16px;
+  padding: 20px;
+  width: 420px;
+  max-width: 90vw;
+  max-height: 70vh;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.icon-picker-dialog h3 {
+  font-family: var(--lcars-font);
+  color: var(--lcars-orange);
+  font-size: 16px;
+  margin: 0;
+  letter-spacing: 1px;
+}
+
+.icon-picker-search {
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid color-mix(in srgb, var(--lcars-lavender) 30%, transparent);
+  border-radius: 8px;
+  color: var(--lcars-text);
+  font-family: var(--lcars-font);
+  font-size: 14px;
+  padding: 8px 12px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.icon-picker-search:focus {
+  outline: none;
+  border-color: var(--lcars-orange);
+}
+
+.icon-picker-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(44px, 1fr));
+  gap: 6px;
+  overflow-y: auto;
+  max-height: 340px;
+  padding: 4px;
+}
+
+.icon-picker-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid color-mix(in srgb, var(--lcars-lavender) 15%, transparent);
+  border-radius: 8px;
+  color: var(--lcars-text);
+  font-size: 18px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.icon-picker-item:hover {
+  background: color-mix(in srgb, var(--lcars-orange) 25%, transparent);
+  border-color: var(--lcars-orange);
+  transform: scale(1.1);
+}
+
+.icon-picker-item.selected {
+  background: color-mix(in srgb, var(--lcars-orange) 35%, transparent);
+  border-color: var(--lcars-orange);
+  color: var(--lcars-orange);
+}

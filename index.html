@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tempo — Agenda Builder</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📋</text></svg>">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous">
+  <link rel="stylesheet" href="/src/styles/lcars-core.css">
+  <link rel="stylesheet" href="/src/styles/tempo.css">
+</head>
+<body>
+  <div class="lcars-frame">
+    <!-- Top Left Elbow -->
+    <div class="lcars-elbow-top"></div>
+
+    <!-- Top Bar -->
+    <div class="lcars-top-bar">
+      <div class="lcars-title" id="app-title">TEMPO AGENDA BUILDER</div>
+      <button class="lcars-bar-segment lcars-theme-toggle" id="theme-toggle" title="Toggle Theme">
+        <span class="toggle-label">THEME</span>
+        <span class="toggle-status" id="theme-status">TNG</span>
+      </button>
+      <button class="lcars-bar-segment lcars-bar-cap lcars-trek-toggle" id="trek-toggle" data-trek="off" title="Toggle Star Trek Mode">
+        <span class="toggle-label">MODE</span>
+      </button>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="lcars-sidebar" id="sidebar">
+      <button class="lcars-sidebar-button primary active" id="btn-agenda" data-view="agenda">
+        New Agenda
+      </button>
+      <button class="lcars-sidebar-button" id="btn-library" data-view="library">
+        Library
+      </button>
+      <button class="lcars-sidebar-button" id="btn-domains" data-view="domains">
+        Topic Directory
+      </button>
+      <button class="lcars-sidebar-button" id="btn-preview" data-view="preview">
+        Preview
+      </button>
+      <button class="lcars-sidebar-button" id="btn-about" data-view="about">
+        About
+      </button>
+      <div class="lcars-sidebar-spacer"></div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="lcars-main" id="main-content">
+      <div class="view active" id="view-agenda"></div>
+      <div class="view" id="view-library"></div>
+      <div class="view" id="view-domains"></div>
+      <div class="view" id="view-preview"></div>
+      <div class="view" id="view-about"></div>
+      <div class="view" id="view-language"></div>
+    </main>
+
+    <!-- Bottom Left Elbow -->
+    <div class="lcars-elbow-bottom" id="elbow-bottom" title="Select Language">
+      <svg class="lang-icon" viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
+        <path d="M12.87 15.07l-2.54-2.51.03-.03A17.52 17.52 0 0014.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11.76-2.04zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2l-4.5-12zm-2.62 7l1.62-4.33L19.12 17h-3.24z"/>
+      </svg>
+    </div>
+
+    <!-- Bottom Bar -->
+    <div class="lcars-bottom-bar">
+      <div class="lcars-bar-segment tan" id="status-bar" style="flex: 2;">Ready</div>
+      <div class="lcars-bar-segment peach" style="flex: 1;">
+        <span id="agenda-status">No agenda</span>
+      </div>
+      <button class="lcars-bar-segment lavender lcars-bar-cap" id="help-btn" title="Help" style="cursor:pointer; border:none; font-family:var(--lcars-font); min-width:120px; padding:0 18px;">
+        <span style="font-size:15px; font-weight:600; letter-spacing:2px;">HELP</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Help Modal -->
+  <div class="lcars-overlay" id="help-modal">
+    <div class="lcars-modal" style="max-width: 600px;">
+      <div class="lcars-modal-header">
+        <div class="lcars-modal-header-cap"></div>
+        <div class="lcars-modal-header-title">HELP</div>
+        <button class="lcars-modal-close" id="help-close">×</button>
+      </div>
+      <div class="lcars-modal-body">
+        <h3 style="color: var(--lcars-lavender); margin-bottom: 12px;">Getting Started</h3>
+        <p>Tempo helps you build professional agendas for client visits.</p>
+        <ul style="padding-left: 20px; margin: 12px 0;">
+          <li>Fill in the <strong style="color: var(--lcars-peach);">project header</strong> with client info</li>
+          <li>Answer <strong style="color: var(--lcars-peach);">pre-work questions</strong> to generate requirements</li>
+          <li>Add <strong style="color: var(--lcars-peach);">travel details</strong> for arrival and departure</li>
+          <li><strong style="color: var(--lcars-peach);">Add topics</strong> to each day from the knowledge domain picker</li>
+          <li><strong style="color: var(--lcars-peach);">Drag & reorder</strong> events within each day</li>
+          <li><strong style="color: var(--lcars-peach);">Preview & export</strong> as PDF for emailing or printing</li>
+        </ul>
+        <h3 style="color: var(--lcars-lavender); margin: 16px 0 12px;">Keyboard Shortcuts</h3>
+        <ul style="padding-left: 20px;">
+          <li><code style="background: rgba(153,153,255,0.15); padding: 2px 6px; border-radius: 3px; color: var(--lcars-lavender); font-family: monospace; font-size: 13px;">Ctrl+S</code> — Save agenda</li>
+          <li><code style="background: rgba(153,153,255,0.15); padding: 2px 6px; border-radius: 3px; color: var(--lcars-lavender); font-family: monospace; font-size: 13px;">Ctrl+P</code> — Preview PDF</li>
+          <li><code style="background: rgba(153,153,255,0.15); padding: 2px 6px; border-radius: 3px; color: var(--lcars-lavender); font-family: monospace; font-size: 13px;">Ctrl+E</code> — Export PDF</li>
+        </ul>
+        <h3 style="color: var(--lcars-lavender); margin: 16px 0 12px;">Star Trek Mode</h3>
+        <p>Toggle the <strong style="color: var(--lcars-teal);">MODE</strong> button in the top bar to switch between Standard and Star Trek mode. Trek mode changes UI labels but never affects your PDF exports.</p>
+      </div>
+      <div class="lcars-modal-footer">
+        <div class="lcars-modal-footer-bar"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Topic Picker Modal -->
+  <div class="lcars-overlay" id="topic-picker-modal">
+    <div class="lcars-modal" style="max-width: 900px; max-height: 85vh;">
+      <div class="lcars-modal-header">
+        <div class="lcars-modal-header-cap" style="background: var(--lcars-orange);"></div>
+        <div class="lcars-modal-header-title" style="background: var(--lcars-orange);" id="topic-picker-title">ADD TOPIC</div>
+        <button class="lcars-modal-close" id="topic-picker-close">×</button>
+      </div>
+      <div class="lcars-modal-body" id="topic-picker-body">
+        <!-- populated by topic-picker.ts -->
+      </div>
+      <div class="lcars-modal-footer">
+        <div class="lcars-modal-footer-bar" style="background: var(--lcars-orange);"></div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="/src/main.ts"></script>
+</body>
+</html>
