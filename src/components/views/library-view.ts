@@ -231,6 +231,7 @@ function initSyncPanel(container: HTMLElement, refreshLibrary: () => void): void
   container.querySelector('#sync-enable')?.addEventListener('click', () => {
     const phrase = generatePassphrase();
     savePhrase(phrase);
+    emit('sync-enabled', {});
     refreshLibrary();
     // Auto-push on first enable
     pushLibrary().catch(console.error);
@@ -242,6 +243,7 @@ function initSyncPanel(container: HTMLElement, refreshLibrary: () => void): void
     const phrase = input?.value.trim();
     if (!phrase) return;
     savePhrase(phrase);
+    emit('sync-enabled', {});
     refreshLibrary();
     // Pull remote library
     try {
@@ -276,6 +278,7 @@ function initSyncPanel(container: HTMLElement, refreshLibrary: () => void): void
   // Disable sync
   container.querySelector('#sync-disable')?.addEventListener('click', () => {
     clearPhrase();
+    emit('sync-disabled', {});
     refreshLibrary();
   });
 }

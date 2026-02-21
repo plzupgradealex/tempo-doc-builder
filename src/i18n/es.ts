@@ -350,4 +350,23 @@ export const es: Translations = {
   templates: 'Plantillas',
   saveAsTemplate: 'Guardar como plantilla',
   noTemplates: '¡Aún no hay plantillas. Guarde una agenda como plantilla para reutilizarla!',
+
+  // Sync status bar
+  syncBarOffline: 'OFFLINE',
+  syncBarOnline: 'ENLAZADO',
+  syncBarSyncing: 'SINCRON.',
+  syncBarError: 'ERROR SYNC',
+
+  // Sync modal
+  syncSettings: 'Ajustes de sincronización',
+  syncModalDesc: 'Sincronice su biblioteca entre dispositivos usando una frase de contraseña. Use una passkey para acceso rápido en este dispositivo.',
+  syncPassphrase: 'Frase de sincronización',
+  syncPassphraseNew: 'Generar nueva',
+  syncPassphraseExisting: 'Usar existente',
+  syncRegisterPasskey: 'Registrar passkey',
+  syncUsePasskey: 'Desbloquear con passkey',
+  syncPasskeyRegistered: 'Passkey registrada para este dispositivo',
+  syncPasskeyRemove: 'Eliminar passkey',
+  syncPasskeyUnsupported: 'Passkeys no compatibles en este navegador',
+  syncClose: 'Cerrar',
 };

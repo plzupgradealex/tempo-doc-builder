@@ -350,4 +350,23 @@ export const de: Translations = {
   templates: 'Vorlagen',
   saveAsTemplate: 'Als Vorlage speichern',
   noTemplates: 'Noch keine Vorlagen. Speichern Sie eine Agenda als Vorlage!',
+
+  // Sync status bar
+  syncBarOffline: 'OFFLINE',
+  syncBarOnline: 'VERBUNDEN',
+  syncBarSyncing: 'SYNC',
+  syncBarError: 'SYNC FEHL.',
+
+  // Sync modal
+  syncSettings: 'Sync-Einstellungen',
+  syncModalDesc: 'Synchronisieren Sie Ihre Bibliothek geräteübergreifend mit einer Passphrase. Nutzen Sie einen Passkey für schnellen Zugriff auf diesem Gerät.',
+  syncPassphrase: 'Sync-Passphrase',
+  syncPassphraseNew: 'Neu generieren',
+  syncPassphraseExisting: 'Vorhandene nutzen',
+  syncRegisterPasskey: 'Passkey registrieren',
+  syncUsePasskey: 'Mit Passkey entsperren',
+  syncPasskeyRegistered: 'Passkey für dieses Gerät registriert',
+  syncPasskeyRemove: 'Passkey entfernen',
+  syncPasskeyUnsupported: 'Passkeys werden in diesem Browser nicht unterstützt',
+  syncClose: 'Schließen',
 };

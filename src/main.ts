@@ -16,11 +16,15 @@ import { initAboutView } from './components/views/about-view';
 import { initTopicPicker } from './components/agenda/topic-picker';
 import { loadCustomDomains } from './storage';
 import { setDomains, setAgenda, getState } from './state';
-import { on } from './bus';
+import { on, emit } from './bus';
 import { t } from './i18n';
 import { getUser, handleOIDCCallback } from './auth/auth';
 import { isSyncEnabled, syncLibrary, pushLibrary } from './sync/sync-client';
 import { getRoomIdFromUrl, joinRoom } from './sync/collab-client';
+import { initSyncIndicator } from './sync/sync-indicator';
+import { initSyncModal } from './sync/sync-modal';
+import { hasRegisteredPasskey, authenticateWithPasskey } from './sync/passkey';
+import { savePhrase } from './sync/passphrase';
 import { setView } from './state';
 
 async function boot(): Promise<void> {
@@ -49,6 +53,12 @@ async function boot(): Promise<void> {
 
   // Initialize topic picker modal
   initTopicPicker();
+
+  // Initialize sync status indicator
+  initSyncIndicator();
+
+  // Initialize sync settings modal
+  initSyncModal();
 
   // Status bar updates
   on('agenda-changed', () => {
@@ -89,6 +99,15 @@ async function boot(): Promise<void> {
   // ── Cloud Sync: pull on boot if enabled ──
   if (isSyncEnabled()) {
     syncLibrary().catch(console.error);
+  } else if (hasRegisteredPasskey()) {
+    // Passkey exists but no passphrase in localStorage — try auto-unlock
+    authenticateWithPasskey().then((phrase) => {
+      if (phrase) {
+        savePhrase(phrase);
+        emit('sync-enabled', {});
+        syncLibrary().catch(console.error);
+      }
+    }).catch(console.error);
   }
 
   // Auto-push after every save

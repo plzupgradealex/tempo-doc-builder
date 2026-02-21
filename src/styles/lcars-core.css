@@ -65,8 +65,8 @@
   --lcars-teal: #66cccc;
 
   /* Alert */
-  --lcars-red: #cc6666;
-  --lcars-alert: #ff5555;
+  --lcars-red: #cc9977;
+  --lcars-alert: #dd8866;
 
   /* Text */
   --lcars-text: #ffcc99;
@@ -101,8 +101,8 @@
   --lcars-sky: #77bbdd;
   --lcars-teal: #44ddbb;
 
-  --lcars-red: #ff6666;
-  --lcars-alert: #ff5555;
+  --lcars-red: #cc9988;
+  --lcars-alert: #cc8877;
 
   --lcars-text: #aaddff;
   --lcars-text-dim: #5588aa;

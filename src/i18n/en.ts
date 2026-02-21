@@ -381,4 +381,23 @@ export const en: Translations = {
   templates: 'Templates',
   saveAsTemplate: 'Save as Template',
   noTemplates: 'No templates yet. Save an agenda as a template to reuse it!',
+
+  // Sync status bar
+  syncBarOffline: 'OFFLINE',
+  syncBarOnline: 'LINKED',
+  syncBarSyncing: 'SYNCING',
+  syncBarError: 'SYNC ERR',
+
+  // Sync modal
+  syncSettings: 'Sync Settings',
+  syncModalDesc: 'Sync your library across devices using a passphrase. Use a passkey for quick access on this device.',
+  syncPassphrase: 'Sync Passphrase',
+  syncPassphraseNew: 'Generate New',
+  syncPassphraseExisting: 'Use Existing',
+  syncRegisterPasskey: 'Register Passkey',
+  syncUsePasskey: 'Unlock with Passkey',
+  syncPasskeyRegistered: 'Passkey registered for this device',
+  syncPasskeyRemove: 'Remove Passkey',
+  syncPasskeyUnsupported: 'Passkeys not supported in this browser',
+  syncClose: 'Close',
 };

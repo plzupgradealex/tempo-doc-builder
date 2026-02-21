@@ -386,4 +386,23 @@ export interface Translations {
   templates: string;
   saveAsTemplate: string;
   noTemplates: string;
+
+  // Sync status bar
+  syncBarOffline: string;
+  syncBarOnline: string;
+  syncBarSyncing: string;
+  syncBarError: string;
+
+  // Sync modal
+  syncSettings: string;
+  syncModalDesc: string;
+  syncPassphrase: string;
+  syncPassphraseNew: string;
+  syncPassphraseExisting: string;
+  syncRegisterPasskey: string;
+  syncUsePasskey: string;
+  syncPasskeyRegistered: string;
+  syncPasskeyRemove: string;
+  syncPasskeyUnsupported: string;
+  syncClose: string;
 }

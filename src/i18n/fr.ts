@@ -346,4 +346,23 @@ export const fr: Translations = {
   templates: 'Modèles',
   saveAsTemplate: 'Enregistrer comme modèle',
   noTemplates: 'Pas encore de modèles. Enregistrez un agenda comme modèle pour le réutiliser !',
+
+  // Sync status bar
+  syncBarOffline: 'HORS LIGNE',
+  syncBarOnline: 'CONNECTÉ',
+  syncBarSyncing: 'SYNCHRO.',
+  syncBarError: 'ERR. SYNC',
+
+  // Sync modal
+  syncSettings: 'Paramètres de synchronisation',
+  syncModalDesc: 'Synchronisez votre bibliothèque entre appareils avec une phrase secrète. Utilisez une passkey pour un accès rapide sur cet appareil.',
+  syncPassphrase: 'Phrase de synchronisation',
+  syncPassphraseNew: 'Générer nouvelle',
+  syncPassphraseExisting: 'Utiliser existante',
+  syncRegisterPasskey: 'Enregistrer passkey',
+  syncUsePasskey: 'Déverrouiller avec passkey',
+  syncPasskeyRegistered: 'Passkey enregistrée pour cet appareil',
+  syncPasskeyRemove: 'Supprimer passkey',
+  syncPasskeyUnsupported: 'Passkeys non supportées dans ce navigateur',
+  syncClose: 'Fermer',
 };
